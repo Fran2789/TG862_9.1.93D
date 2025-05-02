@@ -1,0 +1,374 @@
+*NOTE* - This README is obsolete and will be removed in future releases.
+Please refer user guide for latest information
+
+This file contains basic information on the port of U-Boot to TNETC550W.
+All the changes fit in the common U-Boot infrastructure, providing a
+new TNETC550W-specific entry in makefiles. 
+
+New files:
+----------
+
+1. arm1176 support added as cpi/arm1176 by using existing arm1136 as base
+2. The following new files have been added by this project:
+
+board/tnetc550/                 - board-specific directory
+board/tnetc550/Makefile	        - board-specific makefile
+board/tnetc550/config.mk        - config file: defines TEXT_BASE, CROSS_COMPILE
+board/tnetc550/flash.c	        - flash driver (for VOLCANO board)
+board/tnetc550/u-boot.lds       - linker script
+board/tnetc550/init_emif.S      - memory interface initialization
+board/tnetc550/tnetc550.c       - board initialization
+cpu/arm1176/cache.S	        - cache invlidate/flush routines
+cpu/arm1176/Makefile	        - build rule for cache.S added
+cpu/arm1176/puma5/              - SOC directory
+cpu/arm1176/puma5/puma5.h       - puma5 registers and value masks
+cpu/arm1176/puma5/timer.c       - puma5 timer 
+cpu/arm1176/puma5/eth_cppi41.c  - CPPI4.1 based Ethernet Driver
+cpu/arm1176/puma5/cpemacphy.c   - Ethernet Phy driver
+cpu/arm1176/puma5/cpemacphy.h   - Phy configuration
+cpu/arm1176/puma5/cppi41.h      - CPPI 4.1 
+cpu/arm1176/puma5/mdio_reg.h    - MDIO map
+cpu/arm1176/puma5/reset.S       - Reset control
+cpu/arm1176/puma5/spansion.h    - Spansion flash configuration
+cpu/arm1176/puma5/spi_sfi.h     - 
+cpu/arm1176/puma5/spi_sfi.c     - 
+cpu/arm1176/puma5/spi_sfi_client_info.c - 
+
+include/configs/tnetc550.h      - main configuration file
+
+
+Common file modifications:
+--------------------------
+
+The following common files have been modified by this project:
+(starting from the ppcboot-0.9.3/ directory)
+
+MAKEALL			- tnetc550 entry added
+Makefile		- tnetc550_config entry added
+cpu/arm1176/start.S	- reset_cpu is made SOC specific for CONFIG_TNETC550
+
+
+Board specific Configuration options:
+------------------------------------
+
+CONFIG_TNETC550
+
+	Main board-specific option (should be defined for TNETC550W and derived
+        builds).
+
+CONFIG_PUMA5_QT_EMU
+
+	Gives TNETC550W derived build for puma5 on Quickturn Emulation platform.
+        
+CONFIG_PUMA5_VOLCANO_EMU
+
+	Gives TNETC550W derived build for puma5 on VOLCANO Emulation platform.
+
+
+Build U-Boot for TNETC550W
+---------------------------
+1. U-Boot build uses CROSS_COMPILE variable to determine toolchain
+   prefix. The TNETC550W build defines prefix as "arm_v6_be_uclibc-". Any other
+   toolchain prefix needs to be either exported as shell environment or
+   explicitly provided as argument to 'make'.  
+2. To configure TNETC550W build, type 
+   "make tnetc550_config" at shell for board having serial flash of  64KB sector size.
+   "make tnetc550_sect_256K_config" at shell for board having serial flash of 256KB sector size.
+   Alternatively,   
+    - For Volcano build, use 'make tnetc550_volcano_config'
+    - For Volcano build with SPI Flash, use 'make
+      tnetc550_volcano_spiflash_config'.
+    - For Quickturn build, use 'make tnetc550_qt_config'
+3. Edit the "include/configs/tnetc550.h" file if necessary to change/add
+   configurations (please read limitations/known issues section below), 
+4. type "make"
+
+
+
+Limitations/Known Issues
+------------------------
+1. Added flag -mno-thumb-interwork as PLATFORM_CPPFLAGS in
+   board/tnetc550/config.mk to avoid warning
+
+
+Linux boot configurations
+-------------------------
+U-Boot is configured to be located @81FF0000 in RAM (Top), so Linux and
+Ramdisk (if any) should be loaded accordingly. By default U-Boot expects Linux
+image in uImage format to boot. In addition U-Boot for tnetc550 supports UBFI image to boot
+(please refer "Design Document - U-Boot Dual Image Support.doc" 
+for UBFI image details).
+
+A) Booting uImage
+-----------------
+The Linux image can be converted to U-Boot uImage format by using the 'mkimage'
+tool (from psp_uboot/tools directory). For example, following command builds
+uImage from zImage: 
+    mkimage -A arm -O linux -T kernel -C none -a 80a00000 -e 80a00000 -n "Linux Kernel Image" -d zImage uImage
+
+Refer to README file in U-Boot source directory for additional details to build
+uImage.  
+
+After flashing Linux (and if used, putting Ramdisk in RAM), the U-Boot
+'bootargs' environment variable should be set similar to below examples:
+
+1. Boot Linux with Ramdisk - 
+   Assuming flash map 
+            U-Boot @48000000
+            Environment sectors of Size = 64KB each
+            Linux @48100000
+            Root FS @48300000
+            
+   'bootargs' for Linux with ramdisk @80400000 in RAM are set as,
+  
+   => setenv bootargs 'root=/dev/ram initrd=0x80400000,<ramdisk-size>  mtdparts=physmap-flash.0:128k@0x000000(U-Boot)ro,64k(env1),64k(env2),2m(Kernel),3m(RootFileSystem) console=ttyS0,38400n8'
+
+   Here ramdisk-size needs to be filled as per the size of ramdisk.  
+
+2. Boot Linux with squashfs in Serial flash - 
+   => setenv bootargs 'root=/dev/mtdblock5 mtdparts=spansion:128k@0x000000(U-Boot)ro,64k(env1),64k(env2),2m(Kernel),2m(RootFileSystem) console=ttyS0,38400n8'
+
+After the above settings, 'bootm <linux-img-addr>' command at U-Boot prompt
+should boot the kernel.
+
+B) Booting UBFI
+---------------
+Please refer "Building UBFI" section below to build ubfi image. 
+
+The Current U-Boot build uses two 3.7MB fixed partitions for UBFI images starting
+@256KB offset from FLASH base. In default (initial) configuration, image in
+partition 1 is booted.  So, assuming flash base as 48000000, the map would be:
+    U-Boot @48000000
+    UBFI1 @48040000
+    UBFI2 @483F0000
+
+U-Boot built in 'update' script could be used to download (using tftp) and flash
+the ubfi image. By default ubfi image 1 name is assumed to be 'bootImage1' but
+can be changed by 'setenv UBFINAME1 <name>'
+
+In addition IP environment variables need to be set before running the script.
+Please refer "Using TFTP" section.
+
+Use 'run update1' to flash UBFI1 or 'run update2' to flash UBFI2.
+
+The default 'bootcmd' includes a script to automatically configure and boot UBFI
+image so just typing 'boot' at U-Boot prompt should boot the kernel.
+
+
+Building UBFI Image
+---------------------
+Use 'mkubfi' script in psp_uboot/tools directory to build the UBFI image as
+described below:
+
+1) Prepare kernel image (e.g., zImage) and File-system (e.g.,
+puma5-lzma-squashfs.img) and any other images (optional) required to build UBFI
+image. 
+
+2) Build 'mkimage' tool from U-Boot if it is not already built. Use following
+commad sequence in U-Boot base directory (u-boot-1.2.0) at Linux shell: 
+
+    make tnetc550_config 
+	for board having serial flash of  64KB sector size.
+    make tnetc550_sect_256K_config 
+	for board having serial flash of 256KB sector size.
+	and 
+    make tools
+    
+Note that generally this tool gets built when building U-Boot.
+
+3) The 'mkubfi' scripts expects 'mkimage' executable to be in PATH. e.g. to use
+'mkimage' built in above step, add following path:- /vobs/psp_uboot/tools/ubfi/
+
+4) Make sure that the bootscript (bootscript.txt) is available. By default this
+file is already present in the 'mkubfi' directory in clearcase VOB. 
+
+5) The bootscript can be modified to change image/partion configurations. For
+this, the configuration values at top of the bootscript need to be edited.
+Currently supported configurations are:
+    i)      Flash device - 'flash_bootdev' indicates Flash device used for
+    booting. For Parallel flash use 'flash_bootdev=physmap-flash.0' and Serial
+    flash, use 'flash_bootdev=spansion'.
+
+    ii)    Setting flag 'boot_flash' - Make sure to set the flag
+    'boot_flash=1' when a board has two flashes (e.g., both parallel and
+    serial flash) and using second flash as boot flash. In case using only one
+    or first flash to store U-Boot as well as UBFI images, set 'boot_flash' to
+    '0'. 
+    
+    For any other configuration, modify the bootscript.txt file to have
+    correct 'rootinfo'.
+    
+    iii)    Additional MTD partitions - Provide mtd partitions as
+    'mtdparts_extra'. Note that a comma (',') must be included at start. For
+    example, 'mtdparts_extra=,1M@7M(DUMMY)'.  
+
+    In case no additional partitions are required, mtdparts_extra should be set
+    as empty, e.g, default 'mtdparts_extra='.
+
+    iv)     Additional boot arguments - Additional information needed by Linux
+    can be passed through defining 'bootargs_extra' which will be appended to
+    'bootargs'. For example, 'bootargs_extra=ethaddr0=${ethaddr}'.
+
+6) Run 'mkubfi' at shell, it is required that bootscript, kernel and filesystem
+are passed at fixed argument position to mkubfi as shown below:
+    mkubfi <blocksize[KB|MB]> <linux-load-addr> <bootscript-name> <linuximg-name> <fsimg-name> <additional-files...> 
+
+Here, 'blocksize' should be passed as (or multiple of) erase block size of the
+flash used. 
+
+For example, assuming all the file components of UBFI image are in current
+    directory as 'mkubfi', 
+    mkubfi 64kb 80a00000 bootscript.txt zImage puma5-lzma-squashfs.img
+
+
+Using TFTP
+-----------
+U-Boot has support for downloading the files over ethernet using 'tftpboot'
+command. This requires setting the following environment variables: 
+
+setenv ethaddr aa.bb.cc.11.22.33 (optional)
+setenv ipaddr 172.24.190.166
+setenv serverip 172.24.133.60
+setenv gatewayip 172.24.182.2
+setenv netmask 255.255.252.0
+
+Note that ethernet link is only up when 'tftpboot' command is given and is shut
+down again after the download finishes/aborts.
+
+
+Flash Layout
+-------------
+The layouts consider two UBFI partitions in Flash.
+
+Note: If case of any change in UBFI positions, refer "UBFI Partion Change"
+section below.
+
+            NOR Flash Map (32MB)                                                  
+            =====================
+
+        +-----------------------+    3800_0000
+        |                       |
+        |        U-Boot         |
+        |        (512KB)        |
+        |                       |
+        |                       |
+        +-----------------------+    3808_0000
+        |        Env1           |
+        |        (256KB)        |
+        +-----------------------+    380C_0000
+        |        Env2           |
+        |        (256KB)        |
+        +-----------------------+    3810_0000
+        |                       |
+        |                       |
+        |        UBFI1          |
+        |        (5MB)          |
+        |                       |
+        |                       |
+        |                       |
+        |                       |
+        |                       |
+        +-----------------------+    3860_0000
+        |                       |
+        |                       |
+        |        UBFI2          |
+        |        (5MB)          |
+        |                       |
+        |                       |
+        |                       |
+        |                       |
+        |                       |
+        +-----------------------+    38B0_0000
+        |                       |
+        |       (spare)         |
+        |                       |
+        +-----------------------+    39FF_FFFF
+
+
+
+       Serial (MM-SPI) Flash Map (8MB) 
+       ==============================
+
+        +-----------------------+    4800_0000
+        |                       |
+        |        U-Boot         |
+        |        (128KB)        |
+        |                       |
+        |                       |
+        +-----------------------+    4802_0000
+        |        Env1           |
+        |        (64KB)         |
+        +-----------------------+    4803_0000
+        |        Env2           |
+        |        (64KB)         |
+        +-----------------------+    4804_0000
+        |                       |
+        |                       |
+        |        UBFI1          |
+        |        (3.687MB)      |
+        |                       |
+        |                       |
+        |                       |
+        |                       |
+        |                       |
+        +-----------------------+    483F_0000
+        |                       |
+        |                       |
+        |        UBFI2          |
+        |        (3.687MB)      |
+        |                       |
+        |                       |
+        |                       |
+        |                       |
+        |                       |
+        +-----------------------+    487A_0000
+        |                       |
+        |       (spare)         |
+        |                       |
+        +-----------------------+    487F_FFFF
+
+
+
+UBFI Partitions Change
+-----------------------
+There are two ways to update UBFI partions definition:
+
+1) Erase both the environment sectors and rebuild U-Boot by changing following
+#defines: 
+    UBFI1_SECT_BASE
+    UBFI2_SECT_BASE
+
+OR
+2) Go to U-Boot prompt and use following commands:
+    setenv UBFIADDR1 <new UBFI1 address>
+    setenv UBFIADDR2 <new UBFI2 address>
+    saveenv
+
+In case if the "update1" and "update2" scripts are needed, they need to be
+modified to use new addresses.
+
+
+
+Acceptance criteria tests:
+--------------------------
+
+The following tests have been conducted to validate the port of U-Boot
+to TNETC550W:
+
+1. Operation on serial console:
+
+*TBD*
+------------------------------------------------------------------------------
+
+
+2. Flash driver operation:
+
+*TBD*
+------------------------------------------------------------------------------
+
+3. Ethernet
+The following sequence was performed to test image download and run over
+Ethernet interface:
+
+*TBD*
+------------------------------------------------------------------------------

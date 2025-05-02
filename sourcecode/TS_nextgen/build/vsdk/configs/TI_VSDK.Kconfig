@@ -1,0 +1,84 @@
+# Name: Intel VSDK Kconfig
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/config-language.txt.
+#
+
+# VSDK Main Menu
+mainmenu "Intel VSDK Configuration"
+
+config DEFCONFIG_LIST
+	string
+	option defconfig_list
+	default ".config"
+	default "build/vsdk/configs/defconfig"    
+
+config TI_VSDK_VERSION
+	string "Intel VSDK version"
+
+menu "Vendor Configuration"
+	source ti/common_components/build/vendor/vendor.Kconfig.vsdk
+endmenu
+
+menu "Net-DK Configuration"
+	source ti/netdk/netdk.Kconfig
+endmenu
+
+menu "Common Components Configuration "
+	source ti/common_components/build/common_components.Kconfig
+endmenu
+
+menu "Video Front End Components"
+	source ti/cable_vfe/build/cable_vfe.Kconfig
+endmenu
+
+menu "DOCSIS Configuration"
+	source ti/docsis/build/docsis.Kconfig
+endmenu
+
+menu "PACM Configuration"
+	source ti/pacm/build/pacm.Kconfig
+endmenu
+
+menu "Voice Client Configuration"
+	source ti/ncsdk/build/linux/voice_client.Kconfig
+endmenu
+
+menu "Voice Application Configuration"
+	source ti/masdk/make/build/linux/voice_app.Kconfig
+endmenu
+
+menu "Common Voice Utilities Configuration"
+	source ti/common_voice_utils/build/linux/cvu.Kconfig
+endmenu
+
+menu "Third Party Components"
+	source ti/thirdparty/telchemy/vqmon/build/linux/vqmon.Kconfig
+endmenu
+
+menu "Kernel Configuration"
+	source kernel/ti/linux-2.6.39.3/src/arch/arm/Kconfig
+endmenu
+
+menu "System Configuration"
+	source ti/system/build/system.Kconfig
+endmenu
+
+menu "U-Boot Configuration"
+	source ti/psp_uboot/psp_uboot.Kconfig
+endmenu
+
+menu "Boot RAM Configuration"
+	source ti/psp_boot_ram/build/boot_ram.Kconfig
+endmenu
+
+menu "DSG Models"
+  source ti/docsis/src/common/dsg/dsg.Kconfig
+endmenu
+
+menu "Arris Packetcable"
+     source ti/arris_pcable/build/arris_pcable.Kconfig
+endmenu
+
+menu "Gateway Configuration (TI)"
+     source ti/gw/build/gw.Kconfig
+endmenu

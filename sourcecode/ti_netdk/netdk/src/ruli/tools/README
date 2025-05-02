@@ -1,0 +1,66 @@
+#
+# $Id: README,v 1.6 2004/11/10 15:37:32 evertonm Exp $
+#
+
+addrsolver3.c
+	- one event source for each query
+	- one resolver for each query
+	- NOT prone to input overload
+	- useful for memory leak testing
+
+addrsolver2.c
+	- one event source across queries
+	- one resolver for each query
+	- NOT prone to input overload
+	- useful for memory leak testing
+
+addrsolver.c
+	- one event source across queries
+	- one resolver across queries
+	- NOT prone to input overload
+	- useful for memory leak testing
+
+srvsolver2.c
+	- query SRV records "almost" asynchronously
+	- NOT prone to input overload
+	- useful for memory leak testing
+
+ruli-host.c
+	- query address records "almost" asynchronously
+	- NOT prone to input overload
+	- useful for ruli_host testing (asynchronous, 
+          address-family-agnostic layer)
+
+hostsolver.c
+	- translates hostnames to addresses asynchronously
+	- prone to input overload
+	- uses output queue
+	- useful for testing asynchronous resolver behavior
+
+srvsolver.c
+	- query SRV records asynchronously
+	- prone to input overload
+	- useful for testing asynchronous SRV behavior
+
+resolve.c
+	- perform an arbitrary query synchronously
+	- can resubmit a query mutiple times
+	- doesn't parse the answer
+	- useful for very basic query submission testing
+
+syncsolver.c
+	- query SRV records synchronously
+	- useful for testing synchronous API
+
+list.c
+	- test for ruli_list_t data structures
+
+stdin_domains.c
+	- auxiliar functions to monitor stdin for input
+
+stdout_srv_list.c
+	- auxiliar function to output SRV records
+
+ipv6.c
+	- test for IPv6 helper functions
+

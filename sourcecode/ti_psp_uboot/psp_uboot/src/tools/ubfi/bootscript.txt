@@ -1,0 +1,128 @@
+##########  Modify to change Config variables ################
+# Boot flash number:
+#   - Set as 0 if the first flash contains U-Boot and UBFI
+#   - Set as 1 if 2nd flash has the images
+boot_flash=0
+# Flash device used for booting
+# e.g., 
+#   - For Parallel flash flash_bootdev=physmap-flash.0
+#   - For Serial flash flash_bootdev=spansion
+flash_bootdev=spansion
+# Additional mtd partitions
+mtdparts_extra=
+# Form additional bootargs as 'bootargs_extra by appending
+# Pass 'mem' as part of 'bootargs' to Linux if 'ramsize' is set
+printenv ramsize;
+if itest.b $? == 0;
+then bootargs_extra=mem=${ramsize}' '$bootargs_extra
+fi;
+# Pass 'ethaddr0' to Linux if 'ethaddr' is set
+printenv ethaddr;
+if itest.b $? == 0;
+then bootargs_extra=ethaddr0=${ethaddr}' '$bootargs_extra
+fi;
+############## DO NOT modify after this line #################
+
+echo ============== Running script =========
+
+if itest.b ${ACTIMAGE} == 1; 
+then echo *** Running from UBFI1 partition @${UBFIADDR1}; 
+imgbase=${UBFIADDR1};
+else if itest.b ${ACTIMAGE} == 2; 
+then echo *** Running from UBFI2 partition @${UBFIADDR2}; 
+imgbase=${UBFIADDR2};
+else echo *** ACTIMAGE invalid;
+exit;
+fi;
+fi;
+
+scriptbase=$imgbase;
+# echo scriptbase = $scriptbase
+
+eval $scriptbase + 0xC;
+scriptsize_p=${evalval};
+# echo scriptsize_p = $scriptsize_p;
+
+eval *$scriptsize_p + 0;
+scriptsize=${evalval};
+
+eval $scriptsize + 0x40;
+scriptsize=${evalval};
+
+multioffset=$scriptsize;
+eval $scriptbase + $multioffset;
+multibase=${evalval};
+loadoffset=$multioffset
+loadaddr=$multibase
+
+eval $multibase + 0x40;
+imgsize_p=${evalval};
+eval *$imgsize_p + 0;
+imgsize=${evalval};
+kernelsize=$imgsize;
+
+eval $imgsize_p + 4;
+imgsize_p=${evalval};
+eval *$imgsize_p + 0;
+fssize=${evalval}; 
+
+eval $imgsize_p + 4;
+imgsize_p=${evalval};
+eval *$imgsize_p + 0;
+imgsize=${evalval};
+while itest.b $imgsize != 0;
+do eval $imgsize_p + 4;
+imgsize_p=${evalval};
+eval *$imgsize_p + 0;
+imgsize=${evalval};
+done;
+
+eval $imgsize_p + 4;
+imgsize_p=${evalval};
+kerneladdr=$imgsize_p
+eval $kerneladdr - $scriptbase
+kerneloffset=${evalval}
+
+eval $imgsize_p + $kernelsize;
+fsaddr=${evalval};
+eval $fsaddr - $scriptbase
+fsoffset=${evalval}
+
+echo Load address = $loadaddr ($loadoffset);
+echo Kernel address = $kerneladdr ($kerneloffset);
+echo kernel size = $kernelsize;
+echo FS address = $fsaddr ($fsoffset);
+echo FS size = $fssize
+
+eval ${UBFIADDR2} - ${UBFIADDR1}
+ubfipartsize=${evalval}
+
+eval ${envpartsize} + ${envpartsize}
+eval ${evalval} + ${ubootpartsize} 
+ubfipartoffset1=${evalval}
+
+eval $ubfipartoffset1 + $ubfipartsize
+ubfipartoffset2=${evalval}
+
+if itest.b $boot_flash == 1;
+then echo Setting root mtd for 2nd flash as boot flash...;
+setenv rootinfo /dev/mtdblock7;
+else setenv rootinfo /dev/mtdblock6;
+fi;
+
+if itest.b ${ACTIMAGE} == 1; 
+then eval $ubfipartoffset1 + $kerneloffset
+kernelpartoffset=${evalval}
+setenv mtdinfo ${ubootpartsize}(U-Boot)ro,${envpartsize}(env1),${envpartsize}(env2),$ubfipartsize@$ubfipartoffset1(UBFI1),$ubfipartsize@$ubfipartoffset2(UBFI2),$kernelsize@$kernelpartoffset(Kernel),$fssize(RootFileSystem);
+else if itest.b ${ACTIMAGE} == 2; 
+then eval $ubfipartoffset1 + $ubfipartsize
+eval ${evalval} + $kerneloffset
+kernelpartoffset=${evalval}
+setenv mtdinfo ${ubootpartsize}(U-Boot)ro,${envpartsize}(env1),${envpartsize}(env2),$ubfipartsize@$ubfipartoffset1(UBFI1),$ubfipartsize@$ubfipartoffset2(UBFI2),$kernelsize@$kernelpartoffset(Kernel),$fssize(RootFileSystem);
+fi;
+fi;
+
+setenv bootargs root=${rootinfo} mtdparts=$flash_bootdev:${mtdinfo}$mtdparts_extra console=ttyS0,${baudrate}n8 $bootargs_extra;
+setenv LOADADDR $loadaddr
+
+

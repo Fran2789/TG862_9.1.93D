@@ -1,0 +1,199 @@
+################################################################################
+# 
+# Copyright(c) 2008 Texas Instruments, Inc. All rights reserved.
+# 
+# This program is free software; you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation; either version 2 of the License, or (at your option) 
+# any later version.
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for 
+# more details.
+# 
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, write to the Free Software Foundation, Inc., 59 
+# Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# 
+# The full GNU General Public License is included in this distribution in the
+# file called LICENSE.
+# 
+################################################################################
+
+config TI_TIUDHCP
+	bool "TI DHCPv4 client"
+	default y
+	select PACKET
+	help
+		Enable or Disable TI DHCPv4 Client on the lan/wan side.
+
+if TI_TIUDHCP
+	
+config TI_TIUDHCPC_MAX_OPTION_BUFSIZE
+	int "Max length of options that can be sent/received by client"
+	depends on TI_TIUDHCP
+    range  308 1000
+    default 308
+	help
+        This is the maximum size of option buffer, i.e. maximum size
+        of options that can be sent/received by the client. By default,
+        it is 308 bytes (min specified by RFC 2131).
+	
+config TI_TIUDHCPC_MAX_BACKOFF_TIME
+	int "Max num of seconds to backoff for retransmission of DHCP discover/request/renew"
+    depends on TI_TIUDHCP
+    range  64 256
+    default 64
+    help
+        This is the maximum time in seconds that the tiudhcpc would 
+        backoff for retransmitting a DHCP discover/request/renew message.
+        If the tiudhcpc doesnt recieve a response even after this time, the 
+        config attempt is considered a failure. This number should be chosen
+        with care and can be adjusted to suit your network.
+
+config TI_TIUDHCPC_MAX_CONFIG_ATTEMPTS_THRESHOLD
+	int "Max num of config attempts threshold"
+    depends on TI_TIUDHCP
+    range 3 10
+    default 5
+    help
+		tiudhcpc reports an error to the plugin when this number
+		of config attempts have been completed and there is no response
+		from any server.
+
+config TI_TIUDHCPC_RESTART_DELAY
+	int "Delay between successive configuration attempts"
+	depends on TI_TIUDHCP
+	range 5 15
+	default 10
+	help
+		This is the delay in seconds between successive config attempts
+		by the tiudhcpc.
+
+config TI_TIUDHCPC_OPT_TIMESVR
+	bool "Time Server DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if time server DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x04
+		
+config TI_TIUDHCPC_OPT_COOKIESVR
+	bool "Cookie Server DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if cookie server DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x08
+
+config TI_TIUDHCPC_OPT_LPRSVR
+	bool "Print Server DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if print server DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x09
+
+config TI_TIUDHCPC_OPT_BOOTSIZE
+	bool "Boot Size DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if boot size DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x0d
+
+config TI_TIUDHCPC_OPT_SWAPSVR
+	bool "Swap Server DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if swap server DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x10
+
+config TI_TIUDHCPC_OPT_ROOTPATH
+	bool "Root Path DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if root path DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x11
+
+config TI_TIUDHCPC_OPT_IPTTL
+	bool "IP TTL DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if IP TTL DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x17
+
+config TI_TIUDHCPC_OPT_MTU
+	bool "MTU DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if MTU DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x1a
+
+config TI_TIUDHCPC_OPT_BROADCAST
+	bool "Broadcast DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if Broadcast DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x1c
+
+config TI_TIUDHCPC_OPT_NTPSVR
+	bool "NTP Server DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if NTP Server DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x2a
+
+config TI_TIUDHCPC_OPT_WINS
+	bool "WINS DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if WINS DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x2c
+
+config TI_TIUDHCPC_OPT_MESSAGE
+	bool "Message DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if message DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x38
+
+config TI_TIUDHCPC_OPT_TFTP
+	bool "TFTP DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if TFTP DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x42
+
+config TI_TIUDHCPC_OPT_BOOTFILE
+	bool "BOOT File DHCP option support in TIUDHCPC"
+	depends on TI_TIUDHCP
+	default y
+	help
+		Set this to y if boot file DHCP option handling is required in
+		in TIUDHCPC core. opt code is 0x43
+
+config TI_TIUDHCPC_SAMPLE_PLUGIN
+	bool "Install sample DHCP plugin"
+	depends on TI_TIUDHCP
+	default n
+	help
+		Enables compilation and installation of sample plugin for DHCPv4 client.
+
+config TI_TIUDHCPC_T1_T2_OVERRIDE
+	bool "Read DHCP_T1(58), DHCP_T2(59) options"
+	depends on TI_TIUDHCP
+	default n
+	help
+		When enabled, the DHCPv4 client parses the options 58 and 59 and sets the t1, t2 times for renewal and rebinding accordingly. Otherwise,by default, t1 is set to 0.5*lease and t2 is set to 0.875*lease.
+endif

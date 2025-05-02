@@ -1,0 +1,52 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: SME - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\jerry\LOCALS~1\Temp\RSPF5.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../inc" /I ".." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"..\Output\Debug_SME/SME.pch" /YX /Fo"..\Output\Debug_SME/" /Fd"..\Output\Debug_SME/" /FD /GZ /c 
+"D:\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\sme\sme.c"
+]
+Creating command line "cl.exe @C:\DOCUME~1\jerry\LOCALS~1\Temp\RSPF5.tmp" 
+Creating temporary file "C:\DOCUME~1\jerry\LOCALS~1\Temp\RSPF6.tmp" with contents
+[
+/nologo /out:"..\output\Debug\sme.lib" 
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_SME\sme.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_SME\sme_cross_platform.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_SME\sme_debug.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_SME\sme_ext_event.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\jerry\LOCALS~1\Temp\RSPF6.tmp"
+<h3>Output Window</h3>
+Compiling...
+sme.c
+Creating library...
+<h3>
+--------------------Configuration: Player_Ortho_State - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\jerry\LOCALS~1\Temp\RSPF7.tmp" with contents
+[
+kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib shlwapi.lib sme.lib /nologo /subsystem:console /incremental:yes /pdb:"..\..\Output\Debug_Player/Player_Ortho_State.pdb" /debug /machine:I386 /out:"..\..\Output\Debug\Player_Ortho_State.exe" /pdbtype:sept /libpath:"..\..\output\Debug" 
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_Player\Player2_c.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_Player\Player3_ortho_c.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_Player\Player_c.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_Player\PlayerLinux.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_Player\SingleState.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\output\Debug\sme.lib
+]
+Creating command line "link.exe @C:\DOCUME~1\jerry\LOCALS~1\Temp\RSPF7.tmp"
+<h3>Output Window</h3>
+Linking...
+
+
+
+<h3>Results</h3>
+Player_Ortho_State.exe - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

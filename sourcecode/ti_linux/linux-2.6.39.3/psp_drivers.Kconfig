@@ -1,0 +1,61 @@
+# Name: psp_drivers.Kconfig
+# For a description of the syntax of this configuration file,
+# see Documentation/kbuild/config-language.txt.
+#
+
+# List of PSP drivers
+
+#mainmenu "TI PSP Packaging - kconfig test menu"
+
+config TI_PSP_USB_SUPPORT
+	bool "USB support"
+	default y
+	help
+	    Support for USB modules 
+
+config TI_PSP_USB_HOST_SUPPORT
+	tristate "USB host support"
+	select USB
+	select HOTPLUG
+	select USB_MUSB_HDRC
+	select USB_MUSB_HOST
+	#select USB_INVENTRA_HCD_LOGGING
+	select USB_STORAGE
+	select SCSI
+	select MSDOS_PARTITION
+	select LDM_PARTITION
+	select FAT_FS
+	select MSDOS_FS
+	select VFAT_FS
+	select NLS
+	select NLS_ISO8859_1
+	select NLS_CODEPAGE_437
+	select BLK_DEV_SD
+	select USB_PRINTER
+	depends on TI_PSP_USB_SUPPORT
+	default n
+	help
+	    Support for host-side USB
+
+config TI_PSP_USB_GADGET_SUPPORT
+	tristate "USB gadget support"
+	select USB_GADGET
+    select USB_MUSB_HDRC
+	select USB_MUSB_PERIPHERAL
+    #select USB_GADGET_MUSB_HDRC
+    select USB_ETH
+    select USB_ETH_RNDIS
+    depends on TI_PSP_USB_SUPPORT
+	default y
+	help
+	    Support for USB gadgets
+
+
+config TI_PSP_ETHERNET_SUPPORT
+	tristate "PSP Ethernet CPGMAC_F Support"
+	select ARM_AVALANCHE_CPGMAC_F
+	default y
+	help
+	    Support for Ethernet CPGMAC_F in PSP
+
+

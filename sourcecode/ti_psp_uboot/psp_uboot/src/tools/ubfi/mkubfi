@@ -1,0 +1,184 @@
+#!/bin/bash
+
+get_filesize ()
+{
+    filesize=`ls -l $filename | awk '{ print $5 }'`
+    #filesize=$(stat -c %s $filename)
+}
+
+opt_fixed_args=3
+multi_fixed_args=2
+scr_min_args=`expr $opt_fixed_args + $multi_fixed_args`
+
+# validate if minimum required args are passed
+if [ $# -lt $scr_min_args ]; then
+echo 1>&2 "Usage: $0 <blocksize[KB|MB]> <linux-load-addr> <bootscript-name> <linuximg-name> <fsimg-name> <additional-files...>"
+echo 1>&2 "    e.g., mkubfi 256kb 80a00000 bootscript.txt zImage puma5-lzma-squashfs.img"
+exit 127
+fi
+
+# Set alignment
+align=4
+# Final binary image 
+output_img_name=ubfi
+mkimage_hdr_size=64
+blocksize=$1
+linux_load_addr=$2
+bootscript_name=$3
+
+# TODO check if kernel addr is within range
+
+linuximg_indx=`expr $opt_fixed_args + 1`
+fsimg_indx=`expr $linuximg_indx + 1`
+linuximg_name=${!linuximg_indx}
+fsimg_name=${!fsimg_indx}
+
+num_args=$#
+echo Number of args = $num_args
+
+# extract blockszie if formatted
+tmp=${blocksize%%KB}
+if [ $blocksize == $tmp ]; then
+    tmp=${blocksize%%kb}
+    if [ $blocksize == $tmp ]; then
+        tmp=${blocksize%%MB}
+        if [ $blocksize == $tmp ]; then
+            tmp=${blocksize%%mb}
+            if [ $blocksize == $tmp ]; then
+                tmp=$blocksize
+            else
+                tmp=`expr $tmp \* 1024 \* 1024`
+            fi
+        else
+           tmp=`expr $tmp \* 1024 \* 1024`         
+        fi
+    else
+        tmp=`expr $tmp \* 1024`
+    fi
+else
+    tmp=`expr $tmp \* 1024`
+fi
+
+blocksize=$tmp
+echo blocksize = $blocksize
+
+# check if blocksize is within range
+if [ $blocksize -lt 0  -o  $blocksize -gt 4294967295 ]; then
+echo 1>&2 Blockszie \"$blocksize\" out of range
+exit 127
+fi
+
+# Round bootscript size to 'alignment'
+filename=$bootscript_name
+get_filesize
+echo Original size of bootscript $bootscript_name = $filesize
+
+# mod
+tmp=`expr $filesize % $align`
+tmp=`expr $align - $tmp`
+size=`expr $filesize + $tmp`
+echo Rounded size = $size
+
+# pad with '00'
+dd if=/dev/zero of=pad.tmp bs=1 count=$tmp
+bootscript_padded=$filename.pad
+cat $filename pad.tmp > $bootscript_padded
+rm pad.tmp
+
+# mkimage 
+echo "mkimage -T script -A arm -C none -n 'Boot Script File' -d $bootscript_padded bootscript"
+mkimage -T script -A arm -C none -n 'Boot Script File' -d $bootscript_padded bootscript
+
+# Store bootscript size. To be used when padding kernel.
+filename=bootscript
+get_filesize
+echo bootscript size after mkimage = $filesize
+bootscript_img_size=$filesize
+
+
+# Get Linux image size
+filename=$linuximg_name
+get_filesize
+echo Linux image size = $filesize
+linux_img_size=$filesize
+
+num_files=`expr $num_args - $opt_fixed_args`
+tmp=`expr $num_files + 1`
+tmp=`expr $tmp \* 4`
+multi_hdr_size=`expr $mkimage_hdr_size + $tmp`
+echo Multi-file header size $mkimage_hdr_size + $tmp = $multi_hdr_size
+
+# Determine the unpadded fs offset
+unpadded_fs_offset=`expr $bootscript_img_size + $multi_hdr_size + $linux_img_size`
+echo Unpadded FS offset = $unpadded_fs_offset
+
+if [ $blocksize == 0 ]; then
+tmp=0
+else
+# Calculate the padding required to make FS 'blocksize' aligned
+tmp=`expr $unpadded_fs_offset % $blocksize`
+tmp=`expr $blocksize - $tmp`
+echo Padding required = $tmp
+fi
+padded_fs_offset=`expr $unpadded_fs_offset + $tmp`
+
+# pad with '00'
+dd if=/dev/zero of=pad.tmp bs=1 count=$tmp
+cat $filename pad.tmp > $linuximg_name.tmp
+rm pad.tmp
+
+
+# Calculate the padding required to make FS End 'blocksize' aligned
+filename=$fsimg_name
+get_filesize
+echo FS image size = $filesize
+fs_img_size=$filesize
+if [ $blocksize == 0 ]; then
+tmp=0
+else
+tmp=`expr $fs_img_size + $padded_fs_offset`
+tmp=`expr $tmp % $blocksize`
+tmp=`expr $blocksize - $tmp`
+echo Padding required for FS ending on $blocksize boundary = $tmp
+fi
+# pad with '00'
+dd if=/dev/zero of=pad.tmp bs=1 count=$tmp
+cat $filename pad.tmp > $fsimg_name.tmp
+rm pad.tmp
+
+
+# form mkimage args for multi-file image
+mkimage_files_string=$linuximg_name.tmp:$fsimg_name.tmp
+tmp=`expr $opt_fixed_args + 2 + 1`
+while [ $tmp -le $num_args ]; do
+  mkimage_files_string="$mkimage_files_string:${!tmp}"
+  tmp=`expr $tmp + 1`
+done
+echo $mkimage_files_string
+
+echo "mkimage -n 'Multi Image File'-A arm -O linux -T multi -C none -a $linux_load_addr -e $linux_load_addr -d $mkimage_files_string mkimage.tmp"
+mkimage -n 'Multi Image File' -A arm -O linux -T multi -C none -a $linux_load_addr -e $linux_load_addr -d $mkimage_files_string mkimage.tmp
+
+cat bootscript mkimage.tmp > $output_img_name
+
+rm $bootscript_padded
+rm $linuximg_name.tmp
+rm $fsimg_name.tmp
+rm mkimage.tmp
+
+echo
+echo "*** UBFI image built..."
+
+loadoffset=$bootscript_img_size
+kerneloffset=`expr $loadoffset + $multi_hdr_size`
+
+echo
+echo File Name : $output_img_name
+echo -n Load offset : " 0x"
+echo "obase=16;ibase=10; $loadoffset" | bc
+echo -n Kernel offset : " 0x"
+echo "obase=16;ibase=10; $kerneloffset" | bc
+echo -n FSoffset : " 0x"
+echo "obase=16;ibase=10; $padded_fs_offset" | bc
+echo
+exit 0

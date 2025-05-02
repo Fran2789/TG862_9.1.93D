@@ -1,0 +1,79 @@
+/**
+ * @mainpage Dibbler Developer's Guide
+ *
+ * @section homepage Dibbler Homepage
+ * http://klub.com.pl/dhcpv6/
+ *
+ *
+ * @section toc Table Of Contents
+ * - @subpage intro
+ * - @subpage compilation
+ *   - @subpage compilationPosix
+ *   - @subpage compilationLinux
+ *   - @subpage compilationMac
+ *   - @subpage compilationBSD
+ *   - @subpage compilationSol
+ *   - @subpage autotools
+ *   - @subpage compilationWin32
+ *   - @subpage compilationWinNT
+ *   - @subpage compilationFlexBison
+ *   - @subpage compilationDebRpm
+ *   - @subpage compilationOpenWrt
+ *   - @subpage compilationGentoo
+ *   - @subpage compilationDistros
+ *   - @subpage compilationEnvironment
+ *   - @subpage compilationDefaultValues
+ *   - @subpage compilationModularFeatures
+ *   - @subpage compilationCross
+ * - @subpage portability
+ *   - @subpage portabilityLowLevel
+ * - @subpage generalInfo "4. General information"
+ *   - @subpage generalReleases
+ *   - @subpage generalGIT
+ *   - @subpage generalDocs
+ *   - @subpage generalMemoryCpu
+ * - @subpage srcOverview "5. Source code information"
+ *   - @subpage srcOptionValues
+ *   - @subpage srcMemoryManagement
+ *   - @subpage srcLogger
+ *   - @subpage srcNames
+ *   - @subpage srcParsers
+ *     - @subpage srcParsersParsing
+ *     - @subpage srcParsersUsingValues
+ *     - @subpage srcParsersEmbeddedConfiguration
+ *   - @subpage srcCodingGuidelines
+ * - @subpage arch
+ *   - @subpage archClient
+ *   - @subpage archServer
+ *   - @subpage archRelay
+ *   - @subpage archRequestor
+ * - @subpage debug
+ *   - @subpage debugMemoryLeaks
+ * - @subpage contrib
+ *   - @subpage tests
+ * - @subpage faq
+ * - @subpage tips
+ * - @subpage poslib
+ *   - @subpage poslibIntro
+ *   - @subpage poslibClient
+ * - @subpage bibliography
+ * - @subpage acknowledgements
+ *
+ * Note: some of the links below may not work if corresponding logs are not available.<br/>
+ *
+ * Doxygen: <a href="doxygen.log">[generation log]</a> <a href="doxygen-error.log">[errors and warnings]</a> <br/>
+ * cppcheck: <a href="cppcheck.log">[generation log]</a> <a href="cppcheck-error.log">[errors and warnings]</a> <br/>
+ *
+ * minimal build: <a href="configure-minimal.log">[configure]</a>
+ *                <a href="make-minimal.log">[make]</a>
+ *                <a href="make-minimal-error.log">[errors]</a><br/>
+ * regular build: <a href="configure.log">[configure]</a>
+ *                <a href="make.log">[make]</a>
+ *                <a href="make-error.log">[errors]</a><br/>
+ * gtest build:   <a href="configure-gtest.log">[configure]</a>
+ *                <a href="make-gtest.log">[make]</a>
+ *                <a href="make-gtest-error.log">[errors]</a>
+ *                <a href="make-gtest-check.log">[check]</a><br/>
+ * distcheck:     <a href="make-distcheck.log">[make]</a>
+ *                <a href="make-distcheck-error.log">[errors]</a>
+ */

@@ -1,0 +1,109 @@
+Microsoft Developer Studio Workspace File, Format Version 6.00
+# WARNING: DO NOT EDIT OR DELETE THIS WORKSPACE FILE!
+
+###############################################################################
+
+Project: "Player_Explicit_Entry_Exit"=.\test\player_explicit_entry_exit\Player_Explicit_Entry_Exit.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Engine_Pro_Src/Engine_Pro_C_Src/test/player_explicit_entry_exit", FIBAAAAA
+    .\test\player_explicit_entry_exit
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name SME
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Player_Ortho_State"=.\test\player_ortho_state\Player_Ortho_State.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Engine_Pro_Src/Engine_Pro_C_Src/test/player_ortho_state", GIBAAAAA
+    .\test\player_ortho_state
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name SME
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Player_Pseudo_State"=.\test\player_pseudo_state\Player_Pseudo_State.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Engine_Pro_Src/Engine_Pro_C_Src/test/player_pseudo_state", HIBAAAAA
+    .\test\player_pseudo_state
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name SME
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "Player_State_Timer"=.\test\player_state_timer\Player_State_Timer.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Engine_Pro_Src/Engine_Pro_C_Src/test/player_ortho_state/Player_Ortho_State", EJBAAAAA
+    .\test\player_state_timer
+    end source code control
+}}}
+
+Package=<4>
+{{{
+    Begin Project Dependency
+    Project_Dep_Name SME
+    End Project Dependency
+}}}
+
+###############################################################################
+
+Project: "SME"=.\sme\SME.dsp - Package Owner=<4>
+
+Package=<5>
+{{{
+    begin source code control
+    "$/Engine_Pro_Src/Engine_Pro_C_Src/SME", XHBAAAAA
+    .\sme
+    end source code control
+}}}
+
+Package=<4>
+{{{
+}}}
+
+###############################################################################
+
+Global:
+
+Package=<5>
+{{{
+}}}
+
+Package=<3>
+{{{
+}}}
+
+###############################################################################
+

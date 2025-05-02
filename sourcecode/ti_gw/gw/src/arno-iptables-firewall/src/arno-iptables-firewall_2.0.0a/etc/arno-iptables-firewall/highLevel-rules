@@ -1,0 +1,33 @@
+# Put any high level (iptables) rules here down below:
+######################################################
+# Create new Chains
+iptables -t filter -N SEC_LEVEL &> /dev/null
+iptables -t filter -N SEC_LOG &> /dev/null
+iptables -t filter -F SEC_LEVEL
+iptables -t filter -F SEC_LOG
+
+# Set sucurity level rule
+iptables -A SEC_LOG -j LOG --log-prefix "[SEC_LEVEL]"
+iptables -A SEC_LOG -j DROP
+
+iptables -A SEC_LEVEL -p tcp --dport 80:80 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 443:443 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 53:53 -j RETURN
+iptables -A SEC_LEVEL -p udp --dport 53:53 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 25:25 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 110:110 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 143:143 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 465:465 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 587:587 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 993:993 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 995:995 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 119:119 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 123:123 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 500:500 -j RETURN
+iptables -A SEC_LEVEL -p udp --dport 500:500 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 1723:1723 -j RETURN
+iptables -A SEC_LEVEL -p tcp --dport 3689:3689 -j RETURN
+iptables -A SEC_LEVEL -m state --state ESTABLISHED,RELATED -j RETURN
+iptables -A SEC_LEVEL -j SEC_LOG
+
+# Add new SEC_LEVEL in FORWARD

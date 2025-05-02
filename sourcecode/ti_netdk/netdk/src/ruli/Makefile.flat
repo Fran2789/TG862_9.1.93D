@@ -1,0 +1,37 @@
+# *************************************************************************
+# * Makefile Wrapper file for building RULI Library
+# *************************************************************************
+# *	(C) Copyright 2007, Texas Instruments, Inc.
+# *************************************************************************
+
+# Include this file that contains definitions.
+-include $(TARGET_HOME)/TI_Build.make
+-include $(TARGET_HOME)/.config
+
+all: 
+	$(MAKE) CC=$(CROSS)gcc RANLIB=$(CROSS)ranlib AR=$(CROSS)ar all
+	@# ARRIS CHANGE
+	install -p -m 0644 intel_dns_app/intel_dns_app $(TI_filesystem_path)$(TI_sbindir)
+	install -p -m 0644 src/libruli.so.4 $(TI_filesystem_path)$(TI_rlibdir)
+	ln -sf libruli.so.4 $(TI_filesystem_path)$(TI_rlibdir)/libruli.so
+	install -p -m 0644 src/libruli.so.4 $(TI_build_root)/ti/lib
+	ln -sf libruli.so.4 $(TI_build_root)/ti/lib/libruli.so
+	install -p -m 0644 src/*.h $(TARGET_HOME)/ti/include
+	@# END ARRIS CHANGE
+ifdef CONFIG_TI_INSTALL_DNSC_TEST_APPS
+	$(MAKE) CC=$(CROSS)gcc -C ti_sample install
+endif
+
+clean: 
+	rm -f $(TARGET_HOME)/ti/include/ruli.h
+	rm -f $(TARGET_HOME)/ti/include/ruli_*.h
+	rm -f $(TARGET_HOME)/ti/include/ti_api.h
+	rm -f $(TARGET_HOME)/ti/include/ti_api_hidden.h
+	rm -f $(TI_filesystem_path)$(TI_rlibdir)/libruli.so.4
+	rm -f $(TI_filesystem_path)$(TI_rlibdir)/libruli.so
+	rm -f $(TI_build_root)/ti/lib/libruli.so.4
+	rm -f $(TI_build_root)/ti/lib/libruli.so
+	$(MAKE) clean
+ifdef CONFIG_TI_INSTALL_DNSC_TEST_APPS
+	$(MAKE) CC=$(CROSS)gcc -C ti_sample clean
+endif

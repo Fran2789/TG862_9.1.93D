@@ -1,0 +1,75 @@
+config TI_PSPUBOOT
+        bool "Compile PSP U-Boot"
+        help
+          Enables the compilation of PSP U-Boot bootloader
+        default y
+
+if TI_PSPUBOOT
+
+config TI_PSPUBOOT_DDR_ASYNC_MODE
+        bool "EMIF Controller and DDR PHY in ASYNC mode"
+        help
+          Set ASYNC mode for EMIF Controller and DDR PHY.
+          Required for Power Save Mode.
+        default n
+
+
+config TI_BBU
+        bool "Enable BBU support"
+        help
+          Enable BBU support in u-boot.
+        default n
+
+config TI_PSPUBOOT_NO_FLASH
+        bool "Enable Flashless u-boot mode (EXPERIMENTAL)"
+        help
+          Select this option to compile a u-boot for flashless platforms.
+          The u-boot will use default environment variables, and won't access any flash.
+        default n
+
+config TI_PSPUBOOT_EXTENDED_FLASH
+        bool "Enable support for 32Mb flash in u-boot in Puma5 (Monolithic flash)"
+        help
+	
+          Select this option to compile a u-boot with support of 32Mb flash.
+          The u-boot will use extended memory operations for flash to access higher addresses.
+        default n
+
+config GENERIC_MMC
+	bool "Enable mmc support"
+	help
+	  Select this option to compile a u-boot with mmc support
+	default n
+	
+config UBOOT_SDRAM_OFFSET
+    hex "UBOOT start offset in SDRAM"
+    default 0x01FB0000
+        help
+        U-boot start offset in SDRAM.
+        The calculation is (0x02000000 - 0x00050000).
+
+config UBOOT_SDRAM_ADDRESS
+    hex "(recalculated) UBOOT start address in SDRAM"
+    default 0x41FB0000 if SYSTEM_PUMA6_SOC='y'
+    default 0x81FB0000 if SYSTEM_PUMA5_SOC='y'
+        help
+        U-boot start address in SDRAM.
+        The calculation is (ARM SDRAM base) + (0x02000000 - 0x00050000).
+        For Puma6 it is something that the ATOM processor and the DOCSIS IP must agree on.
+        For Puma5 it must be 0x81FB0000
+        This value is going to be recalculated by the external script
+
+config TI_PSPUBOOT_ARRIS_GATEWAY
+        bool "Enable Gateway configuration"
+        help
+          Enable Gateway configuration in u-boot.
+        default n
+
+config TI_PSPUBOOT_NO_FLASH
+        bool "Enable Flashless u-boot mode (EXPERIMENTAL)"
+        help
+          Select this option to compile a u-boot for flashless platforms.
+          The u-boot will use default environment variables, and won't access any flash.
+        default n
+endif
+

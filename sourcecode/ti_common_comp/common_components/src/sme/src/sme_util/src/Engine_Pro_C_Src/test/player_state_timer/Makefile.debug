@@ -1,0 +1,59 @@
+CXX=g++
+PRJHOME=../..
+IMPORTHOME=$(PRJHOME)/inc
+SRCHOME=$(PRJHOME)/src
+
+PKGMODE=debug
+
+ifeq ($(PKGMODE), debug)
+DEBUGFLAG=-g
+OPTIFLAG=
+else
+endif
+
+#config.o 
+
+OBJS= PlayerLinux.o Player_c.o Player2_c.o Player3_ortho_c.o SingleState.o
+
+INCDIR=-I./ -I$(IMPORTHOME) -I../..
+
+DEFINE=-Wall -W -D_REENTRANT -fPIC -DUNIX -DLINUX -DI386 -D_NOT_USE_TMERRORCODE_ -Dlinux -D__LINUX_GNUCXX__
+
+
+LIBPATH=-L./ -L$(PRJHOME)/output/$(PKGMODE)
+
+LIBS= -lm -lnsl -lpthread -lsme
+
+CPPFLAGS=$(INCDIR)
+CXXFLAGS=$(DEFINE) $(OPTIFLAG) $(DEBUGFLAG) 
+COMPILE.CXX=$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c
+
+
+
+%.oo:%.cpp
+	@echo ""
+	$(COMPILE.CXX) $< -o $@
+
+%.o:%.c
+	@echo ""
+	$(COMPILE.CXX) $< -o $@
+
+TARGETDIR=$(PRJHOME)/output/$(PKGMODE)
+TARGET=$(TARGETDIR)/player_state_timer
+
+debug:$(TARGET)
+	mkdir -p ${TARGETDIR}
+	
+release:$(TARGET)
+	mkdir -p ${TARGETDIR}
+	
+all: $(TARGET)
+
+clean:
+	$(RM) $(OBJS) $(TARGET)
+#	$(RM) -rf $(TARGETDIR)
+
+$(TARGET): $(OBJS)
+	@echo "creating $@"
+	mkdir -p $(TARGETDIR)
+	$(CXX) $(LIBPATH) $(OBJS) -o $@ $(LIBS)

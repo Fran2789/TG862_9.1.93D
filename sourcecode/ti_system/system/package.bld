@@ -1,0 +1,18 @@
+/* simply list the files (or directories) to be included in the array below */
+Pkg.otherFiles=[
+  "package.bld",
+  "package.xdc",
+  "Settings.xdc",
+  "Makefile",
+  "src/uClibc/",
+  "src/uClibc-0.9.33.2/",
+  "src/uClibc-0.9.32/",
+  "src/busybox/",
+  "src/busybox-1.19.2/",
+  "src/udev/",
+  "src/udev-087/",
+  "src/e2fsprogs/",
+  "src/include",
+  "make/*",
+  "build/*",
+];

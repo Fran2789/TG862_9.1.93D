@@ -1,0 +1,264 @@
+config TI_SYSTEM_BOARD_NAME
+    string "Target board"
+	default "tnetc550w" if SYSTEM_PUMA5_SOC
+    default "harborpark" if SYSTEM_PUMA6_SOC
+    help
+                Target board name which will be a part of the final image name.
+                For Puma-6 SoC change to harborpark.
+
+config TI_SYSTEM_USE_SUDO
+    bool "Filesystem creation with sudo"
+    default n
+    help
+     Create the filesystem image from scratch, including making nodes which requires sudo permissions.
+
+config TI_SYSTEM_ENABLE_NFS
+    bool "Enable NFS support"
+    default n
+    select TI_SYSTEM_UCLIBC_DEBUG
+    select NFS_FS
+    select FEATURE_MOUNT_NFS   
+	help
+                Build an image that supports NFS mount.
+
+config TI_SYSTEM_SUPPORT_CPP
+    bool "cpp std library"
+    default n  
+	help
+                image need cpp standard library.
+
+menu "System startup configuration menu"
+config TI_SYSTEM_STARTUP_DEFAULT_FILENAME
+    string "Default filename"
+    default "/etc/scripts/sys_startup.sh"
+    help
+     Default filename to execute at system startup
+
+config TI_SYSTEM_STARTUP_ENABLE_AUTO_RUN
+    bool "Enable auto run by default"
+    default y
+    help
+     Default value for auto start flag (Enable auto run)
+
+endmenu
+
+menu "System debug options"
+
+config TI_SYSTEM_SKIP_STRIP_FILESYSTEM
+    bool "Do not strip final filesystem"
+    default n
+	help
+                Do not strip all the binaries in the filesystem before creation of the final image.
+
+config TI_SYSTEM_SKIP_OPT_LIBS
+    bool "Do not optimize libraries in final filesystem"
+    default n
+	help
+                Do not optimize all the shared library in the filesystem before creation of the final image.
+
+	config TI_SYSTEM_DOCSIS_DEBUG
+    depends on TI_DOCSIS
+    bool "Enable DOCSIS debug symbols"
+	default n
+	select TI_DOCSIS_DEBUG
+	help
+                Compile DOCSIS component with debug symbols and no optimization.
+
+	config TI_SYSTEM_PACM_DEBUG
+    depends on TI_PACM
+    bool "Enable PACM debug symbols"
+	default n
+	select TI_PACM_DEBUG
+	help
+                Compile PACM component with debug symbols and no optimization.
+
+	config TI_SYSTEM_VOICE_DEBUG
+    depends on TI_VOICE_CLIENT
+    bool "Enable Voice debug symbols"
+	default n
+	select TI_VOICE_DEBUG
+	help
+                Compile Voice component with debug symbols and no optimization.
+
+	config TI_SYSTEM_VFE_DEBUG
+    depends on TI_CABLE_VFE
+    bool "Enable VFE debug symbols"
+	default n
+	select TI_CABLE_VFE_DEBUG
+	help
+                Compile VFE component with debug symbols and no optimization.
+
+	config TI_SYSTEM_CC_DEBUG
+    depends on TI_COMMON_COMPONENTS
+    bool "Enable Common Components debug symbols"
+	default n
+	select TI_COMMON_COMPONENTS_DEBUG
+	help
+                Compile Common Components with debug symbols and no optimization.
+       
+	config TI_SYSTEM_KERNEL_DEBUG
+    bool "Enable Kernel debug symbols"
+	default n
+	select DEBUG_KERNEL
+    select DEBUG_INFO
+	help
+                Compile the Linux Kernel with debug symbols.
+
+	config TI_SYSTEM_UCLIBC_DEBUG
+    bool "Enable uClibc debug symbols and debug profile for gdb"
+	default n
+	help
+                Do not strip uClibc symbols and enable RPC required for GDB.
+
+choice
+	prompt "Stack Backtrace"
+	default INTEL_SYSTEM_STACK_BACKTRACE_BASIC
+	help
+	  Select the desired detail level of stack backtraces
+	    - Minimal: Scarce symbols, will not work in all situations
+	    - Basic: Some symbols, traces Signal handlers
+	    - Full: Full symbol support (Not implemented yet)
+
+	config INTEL_SYSTEM_STACK_BACKTRACE_MINIMAL
+		bool "Minimal"
+
+	config INTEL_SYSTEM_STACK_BACKTRACE_BASIC
+		bool "Basic"
+
+#	config INTEL_SYSTEM_STACK_BACKTRACE_FULL
+#		bool "Full"
+
+endchoice 
+
+	config ARRIS_SYSTEM_PCABLE_DEBUG
+    depends on ARRIS_PCABLE
+    bool "Enable Arris Pcable debug symbols"
+	default n
+	select ARRIS_PCABLE_DEBUG
+	help
+                Compile Arris Pcable component with debug symbols and limited optimization.
+
+	config ARRIS_SYSTEM_GDBSERVER
+    bool "Enable GDBServer install on target"
+	default n
+	select ARRIS_SYSTEM_PCABLE_DEBUG
+	select TI_SYSTEM_UCLIBC_DEBUG
+	select TI_SYSTEM_KERNEL_DEBUG
+	select TI_SYSTEM_CC_DEBUG
+	select TI_SYSTEM_VFE_DEBUG
+	select TI_SYSTEM_PACM_DEBUG
+	select TI_SYSTEM_DOCSIS_DEBUG
+	select TI_SYSTEM_SKIP_OPT_LIBS
+	help
+                Install GDB server into the file system and enable the necessary debug options
+
+	config ARRIS_SYSTEM_WR_ICE_DEBUG
+    bool "Enable Wind River ICE Debugging"
+	default n
+	select WR_OCD_DEBUG
+	select ARRIS_SYSTEM_PCABLE_DEBUG
+	select TI_SYSTEM_UCLIBC_DEBUG
+	select TI_SYSTEM_KERNEL_DEBUG
+	select TI_SYSTEM_CC_DEBUG
+	select TI_SYSTEM_VFE_DEBUG
+	select TI_SYSTEM_PACM_DEBUG
+	select TI_SYSTEM_DOCSIS_DEBUG
+	select TI_SYSTEM_SKIP_OPT_LIBS
+	help
+                Enable all debug options to work with the Wind River ICE
+
+endmenu
+
+menu "BusyBox configuration"
+	source ti/system/src/busybox/Config.in
+endmenu
+
+menu "Separate file systems"
+
+    config TI_SEPARATE_FS_ENABLE
+        bool "Allow components on separate file systems"
+        default y
+        help
+            "Allow building and running components as separate file systems"
+    
+    config TI_SEPARATE_FS_ROOT_NAME
+        string "Name of separate FS root directory on the target"
+        depends on TI_GW_SEPARATE_FS_ENABLE
+        default "/fss"
+        help
+            Name of the root directory (on the target) under which all seperate file systems are mounted
+    
+    config TI_SEPARATE_FS_IN_SEPARATE_IMAGE
+        bool "Build separate file systems in seperate image files"
+        depends on TI_SEPARATE_FS_ENABLE
+        default n
+        help
+            Build the separate file systems in seperate image files
+
+    config TI_GW_SEPARATE_FS_ENABLE		
+        bool "GW as seperate file system"
+        depends on TI_SEPARATE_FS_ENABLE
+        default y
+        help
+            Build and load GW as a seperate file system
+    
+    config TI_GW_SEPARATE_FS_NAME
+        string "Name of GW directory"
+        depends on TI_GW_SEPARATE_FS_ENABLE
+        default "/gw"
+        help
+            Name of the directory used to mount the GW file system (under TI_SEPARATE_FS_ROOT_NAME)
+    
+endmenu
+
+config TI_DEFAULT_LSDDB
+    string "Default LSDDB file name"
+    default "/etc/lsddb_default.ini" 
+    help
+        Name of the default LSDDB file
+
+menu "System SoC type"
+
+#
+# Get to know which specific SoC type the user wants to compile for.
+#
+choice
+	prompt "System SoC Types (Puma5, Puma6, ...)"
+	default SYSTEM_PUMA5_SOC
+	help
+		Select the System SoC type.
+
+config SYSTEM_PUMA5_SOC
+	bool "Puma5 SoC type"
+    select MACH_PUMA5
+
+
+config SYSTEM_PUMA6_SOC
+    bool "Puma6 SoC type"
+    select MACH_PUMA6
+
+endchoice
+
+#
+# Changing according to System SoC type.
+#
+if SYSTEM_PUMA5_SOC = 'y'
+config SYSTEM_PUMA_SOC_ID
+	int "Target SoC ID for Puma5"
+	default 50
+	range 50 50
+	help
+		Target SoC type which will be used during image build and runtime.
+		The SoC values are:
+		50 - For Puma-5 SoC type [Default];
+		60 - For Puma-6 SoC type;
+endif
+
+if SYSTEM_PUMA6_SOC = 'y'
+config SYSTEM_PUMA_SOC_ID
+	int "Target SoC ID for Puma6"
+	default 60
+	range 60 60
+endif
+
+endmenu

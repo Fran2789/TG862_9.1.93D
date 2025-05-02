@@ -1,0 +1,28 @@
+# Kconfig file used with conf/mconf/qconf -u <thisfile> for doing implicit
+# unselects. This file will contain the name of selectee symbols that need
+# to be unselected to the same value of the selector. Example:
+#
+# config A
+#   bool "A - selector"
+#   select B
+#
+# config B
+#   bool "B - selectee"
+#
+# If B is present in this file then it will fall under the 'implicit unselect'
+# rule: B = A all the time. Otherwise if B is not in this file then default 
+# behaviour applies: B is independent of A except when A = 1 then B=1.
+# The symbols in this file are the same as they are in defconfig minus
+# CONFIG_. Lines in this file with # as the first char, no preceeding chars,
+#  are comments and ignored
+#
+# ###################################################
+# menuhide feature: you can hide menus and all of it's decendents by including
+# the exact prompt string appended with " menuhide" to this file. Example:
+# to hide the kernel menu whose menu prompt is "Kernel Configuration" add to
+# this file:
+# Kernel Configuration menuhide
+#
+# note if you use qconf you can reveal hidden menus as grey options if you 
+# turn on Option->Show All Options. Turning this off will complete hide
+#

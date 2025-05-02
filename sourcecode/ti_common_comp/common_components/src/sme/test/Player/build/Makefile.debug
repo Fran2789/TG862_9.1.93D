@@ -1,0 +1,72 @@
+CXX=g++
+PRJHOME=$(CURDIR)/..
+IMPORTHOME=$(PRJHOME)/inc
+SRCHOME=$(PRJHOME)/src
+SME_HOME=$(PRJHOME)/../..
+SME_EXPORTDIR=$(SME_HOME)/inc
+SME_OBJDIR=$(SME_HOME)/output/debug
+
+PKGMODE=debug
+
+ifeq ($(PKGMODE), debug)
+DEBUGFLAG=-g
+OPTIFLAG=
+else
+endif
+
+TARGETDIR=$(PRJHOME)/output/$(PKGMODE)
+TARGET=$(TARGETDIR)/player
+
+#config.o 
+
+SMEOBJS = $(addprefix $(SME_OBJDIR)/, sme_cross_platform.o sme.o sme_debug.o sme_ext_event.o)
+SRCS = $(addprefix $(SRCHOME)/, PlayerLinux.cpp Player.cpp Player_c.cpp Player2_c.cpp SingleState.cpp)
+OBJS = $(subst .cpp,.o,$(notdir $(SRCS)))
+
+INCDIR=-I./ -I$(IMPORTHOME) -I$(SME_EXPORTDIR)
+
+DEFINE=-Wall -W -D_REENTRANT -fPIC -DUNIX -DLINUX -DI386 -D_NOT_USE_TMERRORCODE_ -Dlinux -D__LINUX_GNUCXX__
+
+
+LIBPATH=-L./ 
+
+LIBS= -lm -lnsl -lpthread 
+
+CPPFLAGS=$(INCDIR)
+CXXFLAGS=$(DEFINE) $(OPTIFLAG) $(DEBUGFLAG) 
+COMPILE.CXX=$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c
+
+
+
+%.o:$(SRCHOME)/%.cpp
+	@echo ""
+	@pwd
+	$(COMPILE.CXX) $< -o $(TARGETDIR)/$@
+
+all: $(TARGETDIR) $(TARGET)
+
+debug:$(TARGET)
+	@echo $(SRCS)
+	@echo $(OBJS)
+	mkdir -p ${TARGETDIR}
+	
+release:$(TARGET)
+	mkdir -p ${TARGETDIR}
+	
+clean:
+	$(RM) $(OBJS) $(TARGET)
+	$(RM) -rf $(TARGETDIR)
+
+$(TARGETDIR) :
+	@echo "creating $@"
+	mkdir -p ${TARGETDIR}
+
+$(TARGET): $(OBJS)
+	@echo "creating $@"
+	mkdir -p $(TARGETDIR)
+	$(CXX) $(LIBPATH) $(addprefix $(TARGETDIR)/, $(OBJS)) $(SMEOBJS) -o $@ $(LIBS)
+
+#$(OBJS) :
+#	@echo $(SRCS)
+#	@echo $(OBJS)
+

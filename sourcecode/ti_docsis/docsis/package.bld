@@ -1,0 +1,9 @@
+Pkg.otherFiles=[
+	"package.bld",
+	"package.xdc",
+	"Settings.xdc",
+	"Makefile",
+	"src",
+	"tools",
+	"build",
+];

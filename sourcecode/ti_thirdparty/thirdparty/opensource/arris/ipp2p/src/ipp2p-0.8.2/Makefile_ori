@@ -1,0 +1,69 @@
+ifndef PATCHLEVEL
+include ../../Rules.mak
+endif 
+CC = $(CROSS)
+CFLAGS = -O3 -Wall
+
+ifneq ($(KERNELRELEASE),)
+obj-m := ipt_ipp2p.o
+
+else
+
+KERNEL_SRC=$(shell pwd)/../../../TI/kernel/ti/linux-2.6.18/src/
+ifeq ($(KERNEL_SRC),)
+$(error You need to define KERNEL_SRC)
+endif
+
+ifneq ($wildcard $(KERNEL_SRC)/include/linux/modversions.h),)
+MODVERSIONS = -DMODVERSIONS
+endif
+
+_KVER = $(strip $(shell cat $(KERNEL_SRC)/Makefile | grep -e '^VERSION' | cut -d"=" -f2))
+_KPL = $(strip $(shell cat $(KERNEL_SRC)/Makefile | grep -e '^PATCHLEVEL' | cut -d"=" -f2))
+_KSUB = $(strip $(shell cat $(KERNEL_SRC)/Makefile | grep -e '^SUBLEVEL' | cut -d"=" -f2))
+KERNEL_SERIES=$(_KVER).$(_KPL)
+
+ifeq ($(KERNEL_SERIES), 2.6)
+	TARGET=ipt_ipp2p.ko
+else
+	TARGET=ipt_ipp2p.o
+endif
+
+IPTABLES_SRC = $(wildcard ../iptables-1.2.8)
+
+ifeq ($(IPTABLES_SRC),)
+$(warning You need to install iptables sources and maybe set IPTABLES_SRC)
+endif
+
+IPTABLES_INCLUDE = -I$(IPTABLES_SRC)/include
+
+ifneq ($(IPTVER),)
+	IPTABLES_VERSION = $(IPTVER)
+else
+	IPTABLES_VERSION = $(shell cat $(IPTABLES_SRC)/Makefile | grep -e '^IPTABLES_VERSION:=' | cut -d"=" -f2)
+endif
+
+IPTABLES_OPTION = -DIPTABLES_VERSION=\"$(IPTABLES_VERSION)\"
+
+
+
+
+#all: modules libipt_ipp2p.so
+all: modules
+
+modules: $(TARGET)
+
+ipt_ipp2p.o: ipt_ipp2p.h ipt_ipp2p.c
+	$(CC) $(CFLAGS) -I$(KERNEL_SRC)/include -c ipt_ipp2p.c -D__KERNEL__ -DMODULE $(MODVERSIONS)
+
+ipt_ipp2p.ko: ipt_ipp2p.h ipt_ipp2p.c
+	$(MAKE) -C $(KERNEL_SRC) SUBDIRS=$(PWD) modules
+
+
+libipt_ipp2p.so: libipt_ipp2p.c ipt_ipp2p.h
+	$(CC) $(CFLAGS) $(IPTABLES_OPTION) $(IPTABLES_INCLUDE) -fPIC -c libipt_ipp2p.c
+	ld -shared -o libipt_ipp2p.so libipt_ipp2p.o
+
+clean:
+	-rm -f *.o *.so *.ko .*.cmd *.mod.c
+endif

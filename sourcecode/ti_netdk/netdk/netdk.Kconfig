@@ -1,0 +1,238 @@
+# *************************************************************************
+# * NET-DK KConfig File 
+# *************************************************************************
+# *	(C) Copyright 2006, Texas Instruments, Inc.
+# *************************************************************************
+
+config TI_NETDK
+    bool "Networking Development Kit"
+    default y
+
+if TI_NETDK
+
+config TI_WEBSERVER
+    bool "TI Custom WEB Server"
+    depends on TI_NETDK
+    default y
+	help
+		Enable or Disable TI Web Server.
+
+if TI_WEBSERVER
+	
+config	TI_WEBSERVER_HTTP
+	bool "HTTP Protocol"
+	depends on TI_WEBSERVER
+	default y
+	help
+		Enable or Disable HTTP Protocol in the Web Server.
+
+#ARRIS ADD
+config TI_WEBSERVER_HTTPS
+	bool "HTTPS Protocol"
+	depends on TI_WEBSERVER
+	default y
+	help
+		Enable or Disable HTTPS Protocol in the Web Server.
+#END ARRIS ADD
+endif
+
+config TI_SSL
+    bool "TI OpenSSL Library"
+    depends on TI_NETDK
+	default y
+	help
+     Enable or Disable the OpenSSL library
+
+choice
+	prompt "Build Option"
+    default TI_SSL_STATIC
+    depends on TI_SSL
+
+config TI_SSL_SHARED
+	bool "Shared"
+    help
+        Enable this option to build the SSL library as a shared library if it used
+        by multiple applications. 
+
+config TI_SSL_STATIC
+	bool "Static"
+	help
+        Enable this option to build the SSL library statically with an application.
+
+endchoice
+
+config TI_IPSEC_TOOLS
+    bool "IPsec Toolkit"
+    depends on TI_NETDK
+	select NET_KEY
+    select INET_ESP
+    select XFRM
+    select XFRM_USER
+    select USE_POLICY_FWD
+    select INET_XFRM_MODE_TRANSPORT
+    select CRYPTO
+    select CRYPTO_HMAC
+    select CRYPTO_NULL
+    select CRYPTO_MD5
+    select CRYPTO_SHA1
+    select CRYPTO_DES
+    select CRYPTO_AES
+    default y
+    help
+        Enable Disable the IPsec Library.
+    
+config TI_BRIDGE_UTILS
+	bool "Bridge Utilities"
+    depends on TI_NETDK
+	default y
+	help
+		Enable or Disable bridge utilities application
+
+config TI_UTELNETD
+	bool "Telnet server"
+    depends on TI_NETDK
+	default y
+	help
+		Enable or Disable TI Telnet server.
+
+config TI_ARP
+	bool "ARP Utility"
+    depends on TI_NETDK
+	default y
+	help
+		Enable or Disable TI ARP Utility.
+
+#config TI_DPROXY
+#	bool "DNS proxy"
+#    depends on TI_NETDK
+#	default y
+#	help
+#		Enable or Disable TI DNS proxy.
+
+config TI_FLEX
+	bool "FLEX Library"
+    depends on TI_NETDK
+	default y
+	help
+		Enable or Disable Flex Library.
+
+config TI_BER
+	bool "BER Library"
+    depends on TI_NETDK
+	default y
+	help
+		Enable or Disable BER Library.
+
+config TI_KERBEROS
+	bool "Packetcable Kerberos library"
+    depends on TI_NETDK && TI_SSL
+	default y
+	select TI_CERTLIB
+	help
+		Enable or Disable Packetcable Kerberos library. Depends on Openssl. Test app option below.
+
+choice
+        prompt "Build Option"
+    default TI_KERBEROS_STATIC
+    depends on TI_KERBEROS
+
+config TI_KERBEROS_SHARED
+        bool "Shared"
+    help
+		Enable to bulid shared object version of library in addition to static version. libkerb.so
+
+config TI_KERBEROS_STATIC
+        bool "Static"
+        help
+		Static library always built. libkerb.a
+endchoice
+
+config TI_CERTLIB
+        bool "Packetcable Certificate library"
+    depends on TI_NETDK && TI_SSL
+        default y
+        help
+                Enable or Disable Packetcable Certificate library. Depends on Openssl and is required when Kerberos Library selected.
+
+choice
+        prompt "Build Option"
+    default TI_CERTLIB_STATIC
+    depends on TI_CERTLIB
+
+config TI_CERTLIB_SHARED
+        bool "Shared"
+    help
+                Enable to bulid shared object version of library in addition to static version. libcertlib.so
+
+config TI_CERTLIB_STATIC
+        bool "Static"
+        help
+                Static library always built. libkerb.a
+endchoice
+
+source "ti/netdk/src/udhcp/Kconfig"
+source "ti/netdk/src/ti_udhcp/Kconfig"
+source "ti/netdk/src/ti_todc/Kconfig"
+source "ti/netdk/src/ti_sysklogd/Kconfig"
+source "ti/netdk/src/ti_tftp/Kconfig"
+source "ti/netdk/src/ti_dhcpv6/Kconfig"
+source "ti/netdk/src/ruli/Kconfig"
+
+config TI_NETDK_TEST_APPS
+    bool "Test Applications for NetDK Components"
+    depends on TI_NETDK
+    default y
+    help
+        Enable or Disable NetDK Test Applications.
+
+if TI_NETDK_TEST_APPS
+
+config TI_NETDK_TEST_APP_IPSEC
+    bool "IPsec test application"
+    depends on TI_IPSEC_TOOLS  
+	default y
+	help
+		Test application which showcases the use of the various API exposed
+		by the libipsec library.
+
+config TI_NETDK_TEST_APP_META_DATA
+    bool "TI Meta-Data application"
+    depends on TI_META_DATA  
+	default y
+	help
+		Test application which showcases usage of the new socket option to
+		add meta-data to each packet.
+
+config TI_KERBEROS_TEST_APPS
+    bool "Packetcable Kerberos test application"
+    depends on TI_KERBEROS
+    default y
+    help
+        Build test_kerberos application to exercise Packetcable Kerberos library. Use Install Kerberos app option to include it and support files on image.
+
+config TI_INSTALL_KERBEROS_TEST_APPS
+    bool "Install Packetcable Kerberos test application"
+    depends on TI_KERBEROS_TEST_APPS 
+    default y
+    help
+        Install test_kerberos in /usr/sbin. Certificates and keys in /var/tmp. You should change directory (cd) /var/tmp since it the app looks for certificates and keys in current directory and will need to write output to current directory. Output includes packet binaries and status messages on stdout. Arguments all optional: no arguments for local file testing only, first argument is IP address of KDC/Prov server, second argument is IP address of CMS server.
+
+config TI_INSTALL_BER_TEST_APPS
+    bool "Installs BER test apps to filesystem"
+    depends on TI_BER
+    default y
+    help
+        Installs test utilities for testing encoding/decoding in BER Library.  
+
+config TI_INSTALL_DNSC_TEST_APPS
+    bool "Installs DNS client test apps to filesystem"
+    depends on TI_DNSC_RULI
+    default y
+    help
+        Installs test utilities for testing DNS client APIs in RULI Library.  
+
+endif
+
+source "ti/netdk/src/dropbear-0.50/Kconfig"
+
+endif

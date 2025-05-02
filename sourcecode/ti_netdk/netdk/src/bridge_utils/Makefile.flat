@@ -1,0 +1,49 @@
+################################################################################
+# 
+# Copyright(c) 2008 Texas Instruments, Inc. All rights reserved.
+# 
+# This program is free software; you can redistribute it and/or modify it 
+# under the terms of the GNU General Public License as published by the Free 
+# Software Foundation; either version 2 of the License, or (at your option) 
+# any later version.
+# 
+# This program is distributed in the hope that it will be useful, but WITHOUT 
+# ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or 
+# FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for 
+# more details.
+# 
+# You should have received a copy of the GNU General Public License along with
+# this program; if not, write to the Free Software Foundation, Inc., 59 
+# Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+# 
+# The full GNU General Public License is included in this distribution in the
+# file called LICENSE.
+# 
+################################################################################
+
+# *************************************************************************
+# * Makefile Wrapper file for building Bridge Utilities.
+# *************************************************************************
+
+# Include this file that contains definitions.
+-include $(TARGET_HOME)/TI_Build.make
+
+all: build install
+
+build:
+	$(MAKE) CC=$(CC) RANLIB=$(CROSS_TOOLS)ranlib KERNEL_HEADERS=-I$(TI_uclibc_include)
+
+install:
+	@# ARRIS CHANGE
+	install -p -m 0755 libbridge/libbridge.a $(TI_lib_path)
+	install -p -m 0644 libbridge/libbridge.h $(TI_include)
+	install -p -m 0755 brctl/brctl $(TI_filesystem_path)/usr/sbin/brctl
+	@# END ARRIS CHANGE
+
+clean:
+	$(MAKE) clean
+	rm -f $(TI_lib_path)/libbridge.a
+	rm -f $(TI_include)/libbridge.h
+	rm -f $(TI_filesystem_path)/usr/sbin/brctl
+
+

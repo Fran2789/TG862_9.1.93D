@@ -1,0 +1,56 @@
+#
+# File Name: ARM11sfgnu.def
+#
+# DESCRIPTION: ARM11 specific Definitions.
+#
+# Copyright (C) 2008 Texas Instruments, Incorporated
+# 
+# This program is free software; you can redistribute it and/or modify it
+# under the terms of the GNU General Public License as published by the
+# Free Software Foundation version 2.
+#
+# This program is distributed "as is" WITHOUT ANY WARRANTY of any kind,
+# whether express or implied; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# General Public License for more details.
+#
+
+.PHONY: default clean
+
+KERNEL_INC_DIR   := $(KERNEL_DIR)/include
+CC_ARCH_SPECIFIC := -marm -mapcs -mno-sched-prolog -msoft-float -Uarm
+# If FTARCE is not defined (does not work)
+#ifndef CONFIG_FTRACE
+# If FTARCE is not y (does not work)
+#ifneq ($(CONFIG_FUNCTION_TRACER),y)
+# If -pg is not in CFLAGS
+ifneq (,$(findstring -pg,$CFLAGS))
+CC_ARCH_SPECIFIC += -fomit-frame-pointer 
+endif
+
+ifeq ($(ENDIAN),meb)
+CC_ARCH_SPECIFIC += -mbig-endian -DGG_BIG_ENDIAN
+else
+#CC_ARCH_SPECIFIC += -mlittle-endian
+endif
+
+INCLUDES := $(CC_ARCH_SPECIFIC)  -mabi=aapcs-linux -mno-thumb-interwork -D__LINUX_ARM_ARCH__=6 -march=armv6k -mtune=arm1136j-s -Os
+INCLUDES += -D__KERNEL__ -Wno-trigraphs -fno-common  -Wall -Wstrict-prototypes  -fno-strict-aliasing -pipe -DMODULE -DEXPORT_SYMTAB
+INCLUDES += -DCONFIG_ARM_PUMA5 -DGG_LINUX
+INCLUDES += -I$(KERNEL_INC_DIR) -I$(KERNEL_INC_DIR)/asm-arm/mach-avalanche -I$(KERNEL_INC_DIR)/asm-arm/mach-generic -I$(KERNEL_INC_DIR)/asm
+INCLUDES += -I. $(gpl_INC) $(GG_PFORM_EXTRA_INCLUDE) $(MODULE_EXTRA_INC) -I$(TI_include)/linux
+INCLUDES += -c -g
+
+export EXTRA_CFLAGS += $(INCLUDES)
+
+# Module extra compilation flags
+EXTRA_CFLAGS +=
+
+default: 
+	$(QUIET_CMD)$(MAKE) -C $(KERNEL_DIR) M=`pwd` ARCH=arm CROSS_COMPILE=$(CROSS_TOOLS) modules
+
+clean:
+	$(QUIET_CMD)$(RM) -r *.o *~ core .depend .*.cmd *.ko *.mod.c .tmp_versions Module.symvers 
+	$(QUIET_CMD)find . -name *.o -follow | xargs $(RM) 
+	$(QUIET_CMD)find . -name .*.cmd -follow | xargs $(RM) 
+

@@ -1,0 +1,41 @@
+<html>
+<body>
+<pre>
+<h1>Build Log</h1>
+<h3>
+--------------------Configuration: SME - Win32 Debug--------------------
+</h3>
+<h3>Command Lines</h3>
+Creating temporary file "C:\DOCUME~1\jerry\LOCALS~1\Temp\RSP147.tmp" with contents
+[
+/nologo /MDd /W3 /Gm /GX /ZI /Od /I "../inc" /I ".." /D "WIN32" /D "_DEBUG" /D "_MBCS" /D "_LIB" /Fp"..\Output\Debug_SME/SME.pch" /YX /Fo"..\Output\Debug_SME/" /Fd"..\Output\Debug_SME/" /FD /GZ /c 
+"D:\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\sme\sme.c"
+"D:\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\sme\sme_cross_platform.c"
+"D:\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\sme\sme_debug.c"
+"D:\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\sme\sme_ext_event.c"
+]
+Creating command line "cl.exe @C:\DOCUME~1\jerry\LOCALS~1\Temp\RSP147.tmp" 
+Creating temporary file "C:\DOCUME~1\jerry\LOCALS~1\Temp\RSP148.tmp" with contents
+[
+/nologo /out:"..\output\Debug\sme.lib" 
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_SME\sme.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_SME\sme_cross_platform.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_SME\sme_debug.obj
+\SMW_Prj\Engine_Pro_Src\Engine_Pro_C_Src\Output\Debug_SME\sme_ext_event.obj
+]
+Creating command line "link.exe -lib @C:\DOCUME~1\jerry\LOCALS~1\Temp\RSP148.tmp"
+<h3>Output Window</h3>
+Compiling...
+sme.c
+sme_cross_platform.c
+sme_debug.c
+sme_ext_event.c
+Creating library...
+
+
+
+<h3>Results</h3>
+sme.lib - 0 error(s), 0 warning(s)
+</pre>
+</body>
+</html>

@@ -1,0 +1,74 @@
+CXX=g++
+AR= ar cqs
+LEX      = flex
+YACC     = yacc
+LEXFLAGS = 
+YACCFLAGS= -d
+LINK     = g++
+TAR      = tar -cf
+GZIP     = gzip -9f
+COPY     = cp -f
+COPY_FILE= $(COPY) -p
+COPY_DIR = $(COPY) -pR
+DEL_FILE = rm -f
+DEL_DIR  = rmdir
+MOVE     = mv
+
+PRJHOME=..
+IMPORTHOME=$(PRJHOME)/inc
+SRCHOME=$(PRJHOME)/src
+
+PKGMODE=debug
+
+ifeq ($(PKGMODE), debug)
+DEBUGFLAG=-g
+OPTIFLAG=
+else
+endif
+
+#config.o 
+
+OBJS= sme_cross_platform.o sme.o sme_debug.o sme_ext_event.o 
+
+INCDIR=-I./ -I../inc -I../
+
+DEFINE=-Wall -W -D_REENTRANT -fPIC -DUNIX -DLINUX -DI386 -D_NOT_USE_TMERRORCODE_ -Dlinux -D__LINUX_GNUCXX__
+
+
+LIBPATH=-L./ 
+
+LIBS= -lm -lnsl -lpthread 
+
+CPPFLAGS=$(INCDIR)
+CXXFLAGS=$(DEFINE) $(OPTIFLAG) $(DEBUGFLAG) 
+COMPILE.CXX=$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c
+
+
+
+%.oo:%.cpp
+	@echo ""
+	$(COMPILE.CXX) $< -o $@
+
+%.o:%.c
+	@echo ""
+	$(COMPILE.CXX) $< -o $@
+
+TARGETDIR=$(PRJHOME)/output/$(PKGMODE)
+TARGET=$(TARGETDIR)/libsme.a
+
+debug:$(TARGET)
+	mkdir -p ${TARGETDIR}
+	
+release:$(TARGET)
+	mkdir -p ${TARGETDIR}
+	
+all: $(TARGET)
+
+clean:
+	$(RM) $(OBJS) $(TARGET)
+	$(RM) -rf $(TARGETDIR)
+
+$(TARGET): $(OBJS)
+	@echo "creating $@"
+	mkdir -p $(TARGETDIR)
+	$(AR) $(TARGET) $(OBJS)

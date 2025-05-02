@@ -1,0 +1,13 @@
+SCC = This is a Source Code Control file
+
+[EngineLinux.dsp]
+SCC_Aux_Path = "C:\MyDBForSourceSafe"
+SCC_Project_Name = "$/StateWizard_Sample_Src/Cross_Platform/PlayerCrossPlatform", UABAAAAA
+
+[EngineLinux.dsw]
+SCC_Aux_Path = "C:\MyDBForSourceSafe"
+SCC_Project_Name = "$/StateWizard_Sample_Src/Cross_Platform/PlayerCrossPlatform", UABAAAAA
+
+[Player_Pseudo_State.dsp]
+SCC_Aux_Path = "C:\MyDBForSourceSafe"
+SCC_Project_Name = "$/Engine_Pro_Src/Engine_Pro_C_Src/test/player_pseudo_state", HIBAAAAA

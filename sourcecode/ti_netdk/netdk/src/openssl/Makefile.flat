@@ -1,0 +1,236 @@
+#
+# Makefile Wrapper file for building OpenSSL Library
+#
+# Copyright (C) 2008 Texas Instruments Incorporated - http://www.ti.com/ 
+# 
+# 
+#  Redistribution and use in source and binary forms, with or without 
+#  modification, are permitted provided that the following conditions 
+#  are met:
+#
+#    Redistributions of source code must retain the above copyright 
+#    notice, this list of conditions and the following disclaimer.
+#
+#    Redistributions in binary form must reproduce the above copyright
+#    notice, this list of conditions and the following disclaimer in the 
+#    documentation and/or other materials provided with the   
+#    distribution.
+#
+#    Neither the name of Texas Instruments Incorporated nor the names of
+#    its contributors may be used to endorse or promote products derived
+#    from this software without specific prior written permission.
+#
+#  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS 
+#  "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT 
+#  LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+#  A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT 
+#  OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, 
+#  SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT 
+#  LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+#  DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+#  THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT 
+#  (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE 
+#  OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#
+
+# Include this file that contains definitions.
+-include $(TARGET_HOME)/TI_Build.make
+-include $(TARGET_HOME)/.config
+
+TI_uclibc_base = $(TARGET_HOME)/ti
+
+CONFIG_TI_SSLTYPE := linux-generic32
+
+ifdef USER_OPENSSL_CFLAGS
+   CONFIG_TI_SSLOPTS = $(USER_OPENSSL_CFLAGS)
+else
+   CONFIG_TI_SSLOPTS += no-bf no-cast no-idea no-rc2 no-rc4 no-rc5 no-dsa no-md2 no-md4 no-mdc2 no-ripemd no-engines \
+   no-camellia no-capieng no-cms no-gmp no-jpake no-krb5 no-tlsext
+endif
+CONFIG_TI_SSLOPTS += -D_FILE_OFFSET_BITS no-hw no-sse2 no-montasm no-rfc3779 no-seed no-zlib no-zlib-dynamic no-test
+
+ifdef CONFIG_ARM_THUMB
+CONFIG_TI_SSLOPTS += -mthumb -mthumb-interwork
+endif
+
+ifdef CONFIG_CPU_LITTLE_ENDIAN
+CONFIG_TI_SSLOPTS += -DL_ENDIAN
+else
+CONFIG_TI_SSLOPTS += -DB_ENDIAN
+endif
+
+ifdef CONFIG_TI_SSL_SHARED
+   CONFIG_TI_SSLOPTS+= shared
+else
+   CONFIG_TI_SSLOPTS+= no-shared
+endif
+
+CONFIG_TI_SSLOPTS+=-ffunction-sections -fdata-sections
+
+MAKES= \
+./apps/Makefile \
+./crypto/Makefile \
+./crypto/aes/Makefile \
+./crypto/asn1/Makefile \
+./crypto/bf/Makefile \
+./crypto/bio/Makefile \
+./crypto/bn/Makefile \
+./crypto/buffer/Makefile \
+./crypto/camellia/Makefile \
+./crypto/cast/Makefile \
+./crypto/cms/Makefile \
+./crypto/comp/Makefile \
+./crypto/conf/Makefile \
+./crypto/des/Makefile \
+./crypto/dh/Makefile \
+./crypto/dsa/Makefile \
+./crypto/dso/Makefile \
+./crypto/ec/Makefile \
+./crypto/ecdh/Makefile \
+./crypto/ecdsa/Makefile \
+./crypto/engine/Makefile \
+./crypto/err/Makefile \
+./crypto/evp/Makefile \
+./crypto/hmac/Makefile \
+./crypto/idea/Makefile \
+./crypto/jpake/Makefile \
+./crypto/krb5/Makefile \
+./crypto/lhash/Makefile \
+./crypto/md2/Makefile \
+./crypto/md4/Makefile \
+./crypto/md5/Makefile \
+./crypto/mdc2/Makefile \
+./crypto/objects/Makefile \
+./crypto/ocsp/Makefile \
+./crypto/pem/Makefile \
+./crypto/pkcs12/Makefile \
+./crypto/pkcs7/Makefile \
+./crypto/pqueue/Makefile \
+./crypto/rand/Makefile \
+./crypto/rc2/Makefile \
+./crypto/rc4/Makefile \
+./crypto/rc5/Makefile \
+./crypto/ripemd/Makefile \
+./crypto/rsa/Makefile \
+./crypto/seed/Makefile \
+./crypto/sha/Makefile \
+./crypto/stack/Makefile \
+./crypto/store/Makefile \
+./crypto/txt_db/Makefile \
+./crypto/ui/Makefile \
+./crypto/x509/Makefile \
+./crypto/x509v3/Makefile \
+./demos/bio/Makefile \
+./demos/easy_tls/Makefile \
+./demos/eay/Makefile \
+./demos/engines/cluster_labs/Makefile \
+./demos/engines/ibmca/Makefile \
+./demos/engines/rsaref/Makefile \
+./demos/engines/zencod/Makefile \
+./demos/jpake/Makefile \
+./demos/maurice/Makefile \
+./demos/prime/Makefile \
+./demos/sign/Makefile \
+./demos/state_machine/Makefile \
+./demos/tunala/Makefile \
+./engines/Makefile \
+./fips/Makefile \
+./fips/aes/Makefile \
+./fips/des/Makefile \
+./fips/dh/Makefile \
+./fips/dsa/Makefile \
+./fips/hmac/Makefile \
+./fips/rand/Makefile \
+./fips/rsa/Makefile \
+./fips/sha/Makefile \
+./ssl/Makefile \
+./test/Makefile \
+./tools/Makefile
+
+#./apps/Makefile ./crypto/Makefile ./crypto/aes/Makefile ./crypto/asn1/Makefile ./crypto/bf/Makefile ./crypto/bio/Makefile ./crypto/bn/Makefile ./crypto/buffer/Makefile ./crypto/cast/Makefile ./crypto/comp/Makefile ./crypto/conf/Makefile ./crypto/des/Makefile ./crypto/dh/Makefile ./crypto/dsa/Makefile ./crypto/dso/Makefile ./crypto/ec/Makefile ./crypto/ecdh/Makefile ./crypto/ecdsa/Makefile ./crypto/engine/Makefile ./crypto/err/Makefile ./crypto/evp/Makefile ./crypto/hmac/Makefile ./crypto/idea/Makefile ./crypto/krb5/Makefile ./crypto/lhash/Makefile ./crypto/md2/Makefile ./crypto/md4/Makefile ./crypto/md5/Makefile ./crypto/mdc2/Makefile ./crypto/objects/Makefile ./crypto/ocsp/Makefile ./crypto/pem/Makefile ./crypto/pkcs12/Makefile ./crypto/pkcs7/Makefile ./crypto/pqueue/Makefile ./crypto/rand/Makefile ./crypto/rc2/Makefile ./crypto/rc4/Makefile ./crypto/rc5/Makefile ./crypto/ripemd/Makefile ./crypto/rsa/Makefile ./crypto/sha/Makefile ./crypto/stack/Makefile ./crypto/store/Makefile ./crypto/txt_db/Makefile ./crypto/ui/Makefile ./crypto/x509/Makefile ./crypto/x509v3/Makefile ./demos/bio/Makefile ./demos/easy_tls/Makefile ./demos/eay/Makefile ./demos/engines/cluster_labs/Makefile ./demos/engines/ibmca/Makefile ./demos/engines/rsaref/Makefile ./demos/engines/zencod/Makefile ./demos/maurice/Makefile ./demos/prime/Makefile ./demos/sign/Makefile ./demos/state_machine/Makefile ./demos/tunala/Makefile ./engines/Makefile ./ssl/Makefile ./test/Makefile ./tools/Makefile
+MAKESORIG=$(MAKES:=.orig)
+MAKESAVE=$(MAKES:=.save)
+
+CONFIGURE := ./Configure --prefix=$(TI_uclibc_base) --openssldir=$(TI_uclibc_base) $(CONFIG_TI_SSLTYPE) $(CONFIG_TI_SSLOPTS)
+
+.PHONY: config
+
+all: build install
+
+files: 
+	-@for i in $(MAKES) ;do \
+	   cp -f $$i.orig $$i ;\
+	   chmod 644  $$i ;\
+	done
+
+%/Makefile : %/Makefile.orig
+	-@cp -pf $< $@
+	-@chmod 644 $@
+
+package : Makefile links
+Makefile: $(MAKES)
+	-$(CONFIGURE)
+links:
+	-$(MAKE) links
+
+config: $(MAKES)
+	grep ^CONFIG_TI_SSL $(TARGET_HOME)/.config > .cur.config
+	if [[ ! -f .prev.config || ! -f Makefile || `diff --brief .prev.config .cur.config` ]] ;then \
+	   cp .cur.config .prev.config ;\
+	   $(CONFIGURE) ;\
+	fi
+	$(MAKE) depend CC=$(CC) CFLAG="`cat Makefile | grep "CFLAG= " | cut -b8-500 | xargs -n 1 | grep -v thumb | xargs`"
+
+
+build: $(MAKES) config
+	$(MAKE) -j1 CC=$(CC) RANLIB=$(CROSS)ranlib all
+	$(MAKE) -j1 CC=$(CC) RANLIB=$(CROSS)ranlib install_sw
+
+install:
+ifdef CONFIG_TI_SSL_SHARED
+	install -c -m 755 ${TI_uclibc_base}/lib/libcrypto.so.0.9.8 ${TI_filesystem_path}/lib/libcrypto.so.0.9.8
+	ln -sf libcrypto.so.0.9.8 ${TI_filesystem_path}/lib/libcrypto.so.0
+	ln -sf libcrypto.so.0.9.8 ${TI_filesystem_path}/lib/libcrypto.so
+	install -c -m 755 ${TI_uclibc_base}/lib/libssl.so.0.9.8 ${TI_filesystem_path}/lib/libssl.so.0.9.8
+	ln -sf libssl.so.0.9.8 ${TI_filesystem_path}/lib/libssl.so.0
+	ln -sf libssl.so.0.9.8 ${TI_filesystem_path}/lib/libssl.so
+	ln -sf libssl.a ${TI_uclibc_base}/lib/libssl_pic.a
+	ln -sf libcrypto.a ${TI_uclibc_base}/lib/libcrypto_pic.a
+#UNIHAN ADD START
+#	cp -f libssl.so.0.9.8 ${TI_filesystem_path}/../gw/lib/libssl.so
+#UNIHAN ADD END
+else
+	-rm  -f ${TI_uclibc_base}/lib/libssl.so
+	-rm  -f ${TI_uclibc_base}/lib/libssl.so.0
+	-rm  -f ${TI_uclibc_base}/lib/libssl.so.0.9.8
+	-rm  -f ${TI_uclibc_base}/lib/libcrypto.so
+	-rm  -f ${TI_uclibc_base}/lib/libcrypto.so.0
+	-rm  -f ${TI_uclibc_base}/lib/libcrypto.so.0.9.8
+endif
+
+clean: $(MAKES) Makefile
+	$(MAKE) clean
+	-rm  -f ${TI_uclibc_library}/libssl.a
+	-rm  -f ${TI_uclibc_library}/libssl.so
+	-rm  -f ${TI_uclibc_library}/libssl.so.0
+	-rm  -f ${TI_uclibc_library}/libssl.so.0.9.8
+	-rm  -f ${TI_uclibc_library}/libssl.a
+	-rm  -f ${TI_uclibc_library}/libcrypto.so
+	-rm  -f ${TI_uclibc_library}/libcrypto.so.0
+	-rm  -f ${TI_uclibc_library}/libcrypto.so.0.9.8
+	-rm  -f ${TI_filesystem_path}/lib/libcrypto.so.0
+	-rm  -f ${TI_filesystem_path}/lib/libcrypto.so
+	-rm  -f ${TI_filesystem_path}/lib/libcrypto.so.0.9.8
+	-rm  -f ${TI_filesystem_path}/lib/libssl.so.0
+	-rm  -f ${TI_filesystem_path}/lib/libssl.so
+	-rm  -f ${TI_filesystem_path}/lib/libssl.so.0.9.8
+#UNIHAN ADD START
+	-rm  -f ${TI_filesystem_path}/../gw/lib/libssl.so
+#UNIHAN ADD END
+
+distclean: Makefile clean
+	-rm  -f .prev.config .cur.config
+	-rm -f $(MAKES) $(MAKESAVE) Makefile.bak $(TI_base)/ti/openssl.cnf
+	-rm -f Makefile ./apps/CA.pl ./certs/.0 ./crypto/opensslconf.h 
+	-rm -f ./demos/eay/base64.o ./test/evptests.txt ./test/dummytest 
+	-rm -f ./test/*.c ./include/openssl/*.h ./tools/c_rehash

@@ -1,0 +1,55 @@
+CXX=g++
+PRJHOME=../
+IMPORTHOME=$(PRJHOME)/inc
+SRCHOME=$(PRJHOME)/src
+
+PKGMODE=release
+
+ifeq ($(PKGMODE), debug)
+DEBUGFLAG=-g
+OPTIFLAG=
+else
+endif
+
+#config.o 
+
+OBJS= CrossPlatform.o sme.o sme_debug.o ExtEvent.o PlayerLinux.o Player.o  
+
+INCDIR=-I./ -I$(IMPORTHOME) -I(PRJHOME)../../inc
+
+DEFINE=-Wall -W -D_REENTRANT -fPIC -DUNIX -DLINUX -DI386 -D_NOT_USE_TMERRORCODE_ -Dlinux -D__LINUX_GNUCXX__
+
+LIBPATH=-L./
+
+LIBS= -lm -lnsl -lpthread 
+	
+
+CPPFLAGS=$(INCDIR)
+CXXFLAGS=$(DEFINE) $(OPTIFLAG) $(DEBUGFLAG) 
+COMPILE.CXX=$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c
+
+
+
+%.o:%.cpp
+	@echo ""
+	$(COMPILE.CXX) $< -o $@
+
+TARGETDIR=$(PRJHOME)/output/$(PKGMODE)
+TARGET=$(TARGETDIR)/player
+
+debug:$(TARGET)
+	mkdir -p ${TARGETDIR}
+	
+release:$(TARGET)
+	mkdir -p ${TARGETDIR}
+	
+all: $(TARGET)
+
+clean:
+	$(RM) $(OBJS) $(TARGET)
+	$(RM) -rf $(TARGETDIR)
+
+$(TARGET): $(OBJS)
+	@echo "creating $@"
+	mkdir -p $(TARGETDIR)
+	$(CXX) $(LIBPATH) $(OBJS) -o $@ $(LIBS)

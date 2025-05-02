@@ -1,0 +1,330 @@
+/* 
+ * options.c -- DHCP server option packet tools 
+ * Rewrite by Russ Dill <Russ.Dill@asu.edu> July 2001
+ */
+ 
+/*-------------------------------------------------------------------------------------
+// Copyright 2006, Texas Instruments Incorporated
+//
+// This program has been modified from its original operation by Texas Instruments
+// to do the following:
+//
+//	1. The server_config structure is extended to an array to define dhcp server 
+// configuration on a per interface basis. NSP supports multiple lan groups 
+// and requires dhcp server configuration per lan groups. These configurations 
+// are saved in the server_config array. udhcp server supports configuration for
+//  upto 6 interfaces.
+//  2. Modified the main() function accordingly to listen on upto 6 sockets. 
+// lease_file is therefore defined on a per interface basis. auto_time variable 
+// (timeout_end) is extended to an array to hold 6 entries. 
+//
+// THIS MODIFIED SOFTWARE AND DOCUMENTATION ARE PROVIDED
+// "AS IS," AND TEXAS INSTRUMENTS MAKES NO REPRESENTATIONS
+// OR WARRENTIES, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED
+// TO, WARRANTIES OF MERCHANTABILITY OR FITNESS FOR ANY
+// PARTICULAR PURPOSE OR THAT THE USE OF THE SOFTWARE OR
+// DOCUMENTATION WILL NOT INFRINGE ANY THIRD PARTY PATENTS,
+// COPYRIGHTS, TRADEMARKS OR OTHER RIGHTS.
+//
+// These changes are covered as per original license.
+//-------------------------------------------------------------------------------------*/
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "udhcp_debug.h"
+#include "options.h"
+#include "udhcp_alloc.h"
+
+
+
+/* supported options are easily added here */
+struct dhcp_option options[] = {
+	/* name[10]	flags					code */
+	{"subnet",	OPTION_IP | OPTION_REQ,			0x01},
+	{"timezone",	OPTION_S32,				0x02},
+	{"router",	OPTION_IP | OPTION_LIST | OPTION_REQ,	0x03},
+#ifdef CONFIG_TI_TIUDHCPC_OPT_TIMESVR
+	{"timesvr",	OPTION_IP | OPTION_LIST,		0x04},
+#endif
+	{"namesvr",	OPTION_IP | OPTION_LIST,		0x05}, 
+	{"dns",		OPTION_IP | OPTION_LIST | OPTION_REQ,	0x06},
+	{"logsvr",	OPTION_IP | OPTION_LIST,		0x07},
+#ifdef CONFIG_TI_TIUDHCPC_OPT_COOKIESVR
+	{"cookiesvr",	OPTION_IP | OPTION_LIST,		0x08},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_LPRSVR
+	{"lprsvr",	OPTION_IP | OPTION_LIST,		0x09},
+#endif
+	{"hostname",	OPTION_STRING | OPTION_REQ,		0x0c},
+#ifdef CONFIG_TI_TIUDHCPC_OPT_BOOTSIZE
+	{"bootsize",	OPTION_U16,				0x0d},
+#endif
+	{"domain",	OPTION_STRING | OPTION_REQ,		0x0f},
+#ifdef CONFIG_TI_TIUDHCPC_OPT_SWAPSVR
+	{"swapsvr",	OPTION_IP,				0x10},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_ROOTPATH
+	{"rootpath",	OPTION_STRING,				0x11},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_IPTTL
+	{"ipttl",	OPTION_U8,				0x17},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_MTU
+	{"mtu",		OPTION_U16,				0x1a},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_BROADCAST
+	{"broadcast",	OPTION_IP | OPTION_REQ,			0x1c},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_NTPSVR
+	{"ntpsrv",	OPTION_IP | OPTION_LIST,		0x2a},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_WINS
+	{"wins",	OPTION_IP | OPTION_LIST,		0x2c},
+#endif
+	{"requestip",	OPTION_IP,				0x32},
+	{"lease",	OPTION_U32,				0x33},
+	{"dhcptype",	OPTION_U8,				0x35},
+	{"serverid",	OPTION_IP,				0x36},
+#ifdef CONFIG_TI_TIUDHCPC_OPT_MESSAGE
+	{"message",	OPTION_STRING,				0x38},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_TFTP
+	{"tftp",	OPTION_STRING,				0x42},
+#endif
+#ifdef CONFIG_TI_TIUDHCPC_OPT_BOOTFILE
+	{"bootfile",	OPTION_STRING,				0x43},
+#endif
+
+    /* V-I Vendor-specific Information option 125 */
+	{"vendor",	OPTION_VARIABLE | OPTION_LIST,  0x7d}, 
+
+	{"",		0x00,				0x00}
+};
+
+/* Lengths of the different option types */
+int option_lengths[] = {
+	[OPTION_IP] =		4,
+	[OPTION_IP_PAIR] =	8,
+	[OPTION_BOOLEAN] =	1,
+	[OPTION_STRING] =	1,
+	[OPTION_U8] =		1,
+	[OPTION_U16] =		2,
+	[OPTION_S16] =		2,
+	[OPTION_U32] =		4,
+	[OPTION_S32] =		4,
+    [OPTION_VARIABLE] =	1   /* added for Option 125 */
+};
+
+
+unsigned char *get_option(struct dhcpMessage *packet, int code, int *len)
+{
+	int i, length;
+	unsigned char *optionptr;
+	int over = 0, done = 0, curr = OPTION_FIELD;
+	
+	optionptr = packet->options;
+	*len=0;
+	i = 0;
+	length = CONFIG_TI_TIUDHCPC_MAX_OPTION_BUFSIZE;
+	while (!done) {
+		if (i >= length) {
+			LOG(LOG_WARNING, "bogus packet, option fields too long.");
+			return NULL;
+		}
+		if (optionptr[i + OPT_CODE] == code) {
+			if (i + 1 + optionptr[i + OPT_LEN] >= length) {
+				LOG(LOG_WARNING, "bogus packet, option fields too long.");
+				return NULL;
+			}
+			*len = optionptr[i + OPT_LEN];
+			return optionptr + i + OPT_DATA;
+		}			
+		switch (optionptr[i + OPT_CODE]) {
+		case DHCP_PADDING:
+			i++;
+			break;
+		case DHCP_OPTION_OVER:
+			if (i + 1 + optionptr[i + OPT_LEN] >= length) {
+				LOG(LOG_WARNING, "bogus packet, option fields too long.");
+				return NULL;
+			}
+			over = optionptr[i + 3];
+			i += optionptr[OPT_LEN] + 2;
+			break;
+		case DHCP_END:
+			if (curr == OPTION_FIELD && over & FILE_FIELD) {
+				optionptr = packet->file;
+				i = 0;
+				length = 128;
+				curr = FILE_FIELD;
+			} else if (curr == FILE_FIELD && over & SNAME_FIELD) {
+				optionptr = packet->sname;
+				i = 0;
+				length = 64;
+				curr = SNAME_FIELD;
+			} else done = 1;
+			break;
+		default:
+			i += optionptr[OPT_LEN + i] + 2;
+		}
+	}
+	return NULL;
+}
+
+
+
+/* return the position of the 'end' option (no bounds checking) */
+int end_option(unsigned char *optionptr) 
+{
+	int i = 0;
+	
+	while (optionptr[i] != DHCP_END) {
+		if (optionptr[i] == DHCP_PADDING) i++;
+		else i += optionptr[i + OPT_LEN] + 2;
+
+		// ARRIS ADD : Bounds check to protect against seg faults
+		if (i >= CONFIG_TI_TIUDHCPC_MAX_OPTION_BUFSIZE) {
+			return -1;
+		}
+		// END ARRIS
+	}
+
+	return i;
+}
+
+
+/* add an option string to the options (an option string contains an option code,
+ * length, then data) */
+int add_option_string(unsigned char *optionptr, unsigned char *string)
+{
+	int end = end_option(optionptr);
+	
+	// ARRIS ADD : handle buffer check failure
+	if (end < 0) {
+		LOG(LOG_ERR, "Option 0x%02x could not find the end option!", string[OPT_CODE]);
+		return 0;
+	}
+	// END ARRIS
+	
+	/* end position + string length + option code/length + end option */
+	if (end + string[OPT_LEN] + 2 + 1 >= CONFIG_TI_TIUDHCPC_MAX_OPTION_BUFSIZE) {
+		LOG(LOG_ERR, "Option 0x%02x did not fit into the packet!", string[OPT_CODE]);
+		return 0;
+	}
+	DEBUG(LOG_INFO, "adding option 0x%02x", string[OPT_CODE]);
+	memcpy(optionptr + end, string, string[OPT_LEN] + 2);
+	optionptr[end + string[OPT_LEN] + 2] = DHCP_END;
+	return string[OPT_LEN] + 2;
+}
+
+#if 0
+int add_plugin_options(unsigned char *optionptr, char type)
+{
+	int end = end_option(optionptr);
+	int len = 0;
+
+	len = udhcpc_mcb.plugin.add_plugin_options(char type, &packet->options[end]);
+
+	optionptr[end + len] = DHCP_END;
+	return len;
+
+}
+#endif
+
+/* add a one to four byte option to a packet */
+int add_simple_option(unsigned char *optionptr, unsigned char code, u_int32_t data)
+{
+	char length = 0;
+	int i;
+	unsigned char option[2 + 4];
+
+    union {
+	unsigned char u8;
+	u_int16_t u16;
+	u_int32_t u32;
+	} aligned;
+	
+	for (i = 0; options[i].code; i++)
+		if (options[i].code == code) {
+			length = option_lengths[options[i].flags & TYPE_MASK];
+		}
+		
+	if (!length) {
+		DEBUG(LOG_ERR, "Could not add option 0x%02x", code);
+		return 0;
+	}
+	
+	option[OPT_CODE] = code;
+	option[OPT_LEN] = length;
+
+	switch (length) {
+		case 1: 
+		{
+			aligned.u8=data;
+			break;
+		}
+		case 2: 
+		{
+			aligned.u16=data;
+			break;
+		}
+		case 4: 
+		{
+			aligned.u32=data;
+			break;
+		}
+	}
+	memcpy(option + 2, &aligned.u32, length); 
+	return add_option_string(optionptr, option);
+}
+
+
+#ifdef XXXX
+/* find option 'code' in opt_list */
+struct option_set *find_option(struct option_set *opt_list, char code)
+{
+	while (opt_list && opt_list->data[OPT_CODE] < code)
+		opt_list = opt_list->next;
+
+	if (opt_list && opt_list->data[OPT_CODE] == code) return opt_list;
+	else return NULL;
+}
+
+
+/* add an option to the opt_list */
+void attach_option(struct option_set **opt_list, struct dhcp_option *option, char *buffer, int length)
+{
+	struct option_set *existing, *new, **curr;
+
+	/* add it to an existing option */
+	if ((existing = find_option(*opt_list, option->code))) {
+		DEBUG(LOG_INFO, "Attaching option %s to existing member of list", option->name);
+		if (option->flags & OPTION_LIST) {
+			if (existing->data[OPT_LEN] + length <= 255) {
+				existing->data = realloc(existing->data, 
+						existing->data[OPT_LEN] + length + 2);
+				memcpy(existing->data + existing->data[OPT_LEN] + 2, buffer, length);
+				existing->data[OPT_LEN] += length;
+			} /* else, ignore the data, we could put this in a second option in the future */
+		} /* else, ignore the new data */
+	} else {
+		DEBUG(LOG_INFO, "Attaching option %s to list", option->name);
+		
+		/* make a new option */
+		new = udhcp_alloc(sizeof(struct option_set));
+		new->data = udhcp_alloc(length + 2);
+		new->data[OPT_CODE] = option->code;
+		new->data[OPT_LEN] = length;
+		memcpy(new->data + 2, buffer, length);
+		
+		curr = opt_list;
+		while (*curr && (*curr)->data[OPT_CODE] < option->code)
+			curr = &(*curr)->next;
+			
+		new->next = *curr;
+		*curr = new;		
+	}
+}
+#endif

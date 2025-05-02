@@ -1,0 +1,69 @@
+#
+#
+#  GPL LICENSE SUMMARY
+#
+#  Copyright(c) 2012-2013 Intel Corporation.
+#
+#  This program is free software; you can redistribute it and/or modify
+#
+#  it under the terms of version 2 of the GNU General Public License as
+#
+#  published by the Free Software Foundation.
+#
+#  This program is distributed in the hope that it will be useful, but
+#
+#  WITHOUT ANY WARRANTY; without even the implied warranty of
+#
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+#
+# General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#
+#  along with this program; if not, write to the Free Software
+#
+#  Foundation, Inc., 51 Franklin St - Fifth Floor, Boston, MA 02110-1301 USA.
+#
+#  The full GNU General Public License is included in this distribution
+#
+#  in the file called LICENSE.GPL.
+#
+#  Contact Information:
+#
+#    Intel Corporation
+#
+#    2200 Mission College Blvd.
+#
+#    Santa Clara, CA  97052
+
+
+export gpl_SRC_DIR ?= $(TI_MASDK_gpl_ROOT)/src
+                                                                                                         
+export gpl_INC_DIR ?= $(TI_MASDK_gpl_ROOT)/inc
+                                                                                                         
+export gpl_DIR ?= $(gpl_SRC_DIR)
+
+export gpl_INC      := -I$(gpl_INC_DIR) -I$(gpl_INC_DIR)/$(MASDK_PFORM) 
+export gpl_ARCH_DEF :=  $(TI_MASDK_gpl_ROOT)/build/$(CPU)$(TOOL).def
+
+gpl_MODULE  := mxp
+mxp_MODULES := mxpmod.ko mxpmem.ko
+export mxp_MODULE_PATH := $(gpl_DIR)/mxp
+
+ifneq ($(TI_MASDK_SRC_TEST),regtest)
+gpl_MODULE     += dspmod
+dspmod_MODULES := dspmod.ko
+export dspmod_MODULE_PATH := $(gpl_DIR)/dspmod
+
+gpl_MODULE     += telehal
+telehal_MODULES := telehal.ko
+export telehal_MODULE_PATH := $(gpl_DIR)/telehal
+endif
+
+# Temporarily removed voiceni 
+gpl_MODULE     += voiceni 
+voiceni_MODULES :=  voiceni.ko
+export voiceni_MODULE_PATH := $(gpl_DIR)/voiceni
+
+export gpl_MODULES := $(foreach mod, $(gpl_MODULE), $(addprefix $($(mod)_MODULE_PATH)/, $($(mod)_MODULES)))
+

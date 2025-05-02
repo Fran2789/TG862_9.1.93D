@@ -1,0 +1,32 @@
+# Put any medium level (iptables) rules here down below:
+########################################################
+# Create new Chains
+iptables -t filter -N SEC_LEVEL &> /dev/null
+iptables -t filter -N SEC_LOG &> /dev/null
+iptables -t filter -F SEC_LEVEL
+iptables -t filter -F SEC_LOG
+
+# Set sucurity level rule
+iptables -A SEC_LOG -j LOG --log-prefix "[SEC_LEVEL]"
+iptables -A SEC_LOG -j DROP
+
+iptables -A SEC_LEVEL -p udp --dport 113:113 -j SEC_LOG
+iptables -A SEC_LEVEL -p icmp -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 1214:1214 -j SEC_LOG
+iptables -A SEC_LEVEL -p tcp --dport 1214:1214 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 4661:4672 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 6257:6257 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 6699:6699 -j SEC_LOG
+iptables -A SEC_LEVEL -p tcp --dport 6881:6999 -j SEC_LOG
+iptables -A SEC_LEVEL -p tcp --dport 6346:6346 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 6346:6346 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 5555:5555 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 3306:3306 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 2323:2323 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 6667:6667 -j SEC_LOG
+iptables -A SEC_LEVEL -p udp --dport 7778:7778 -j SEC_LOG
+iptables -A SEC_LEVEL -p tcp --dport 49152:65534 -j SEC_LOG
+iptables -A SEC_LEVEL -m state --state ESTABLISHED,RELATED -j RETURN
+iptables -A SEC_LEVEL -j RETURN
+
+# Add new SEC_LEVEL in FORWARD

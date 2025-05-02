@@ -1,0 +1,396 @@
+#********************************************************************************
+#**+--------------------------------------------------------------------------+**
+#**|                            ****                                          |**
+#**|                            ****                                          |**
+#**|                            ******o***                                    |**
+#**|                      ********_///_****                                   |**
+#**|                      ***** /_//_/ ****                                   |**
+#**|                       ** ** (__/ ****                                    |**
+#**|                           *********                                      |**
+#**|                            ****                                          |**
+#**|                            ***                                           |**
+#**|                                                                          |**
+#**|         Copyright (c) 1998-2011 Texas Instruments Incorporated           |**
+#**|                        ALL RIGHTS RESERVED                               |**
+#**|                                                                          |**
+#**| Permission is hereby granted to licensees of Texas Instruments           |**
+#**| Incorporated (TI) products to use this computer program for the sole     |**
+#**| purpose of implementing a licensee product based on TI products.         |**
+#**| No other rights to reproduce, use, or disseminate this computer          |**
+#**| program, whether in part or in whole, are granted.                       |**
+#**|                                                                          |**
+#**| TI makes no representation or warranties with respect to the             |**
+#**| performance of this computer program, and specifically disclaims         |**
+#**| any responsibility for any damages, special or consequential,            |**
+#**| connected with the use of this program.                                  |**
+#**|                                                                          |**
+#**+--------------------------------------------------------------------------+**
+#********************************************************************************
+include $(TARGET_HOME)/TI_Build.make
+include $(TARGET_HOME)/release.mak
+-include $(TARGET_HOME)/.config
+
+export DOCSIS_SOC
+
+SCRIPTS_DIR := $(TI_tools_path)/scripts
+MKUBFI_OUT_FILE := ubfi
+
+# UBFI parameters for Puma5 and Puma6 images
+UBFI_BLK_SIZE := 1KB
+
+ifeq ($(DOCSIS_SOC), PUMA5)
+# Puma5 chip
+SOC_TYPE:=tnetc48xx
+COMMON_OUTFILE_NAME:=$(PRODUCT_NAME).$(SOC_TYPE)
+# UBFI parameters for Puma5 image only
+UBFI_LINUX_LOAD_ADDR := 0x80a00000  # In Puma-5 image we put the Load-Addr 
+UBFI_SCRIPT_FILENAME := bootscript.txt
+else
+# Puma6 chip
+SOC_TYPE:=$(DOCSIS_SOC_NAME)
+COMMON_OUTFILE_NAME:=$(PRODUCT_NAME).$(SOC_TYPE).intel
+# UBFI parameters for Puma6 image only
+UBFI_LINUX_LOAD_ADDR := 0xa00000    # In Puma-6 image we put the Load-Offset 
+UBFI_SCRIPT_FILENAME := bootscript_puma6.txt
+ATOM_BASE_DIR:=/tmp/atom_base_dir_$(ATOM_BUILD_NUM)
+ATOM_IMAGE_NAME:=$(COMMON_OUTFILE_NAME).atom_uImage
+ATOM_ROOTFS_NAME:=appcpuRootfs.img
+# ATOM images with small size (subset of the full ATOM image)
+# ARRIS DELETE - START (not using customized image and rootfs names)
+# ATOM_CUSTOMIZED_IMAGE_NAME:=customized_$(ATOM_IMAGE_NAME)
+# ATOM_CUSTOMIZED_ROOOFS_NAME:=customized_$(ATOM_ROOTFS_NAME)
+# ARRIS DELETE - END (not using customized image and rootfs names)
+
+ATOM_ROOTFS_NAME_FINAL:=$(COMMON_OUTFILE_NAME).atom_rootfs
+BZIMAGE_NAME:=bzImage
+ATOM_BZIMAGE_NAME_FINAL:=$(COMMON_OUTFILE_NAME).atom_kernel
+CEFDK_HPMG_NAME:=ce2600_HPMG.bin
+CEFDK_HP_NAME:=ce2600_HP.bin
+CEFDK_GS_NAME:=ce2600_GS.bin
+CEFDK_GS3_NAME:=ce2600_GS3.bin
+CEFDK_HP_128_NAME:=ce2600_HP_128.bin
+export ATOM_BUILD_NUM
+endif 
+
+
+BUILD_DATE:=$(shell date +'%y%m%d')
+KERNEL_TYPE:=Image.bin
+
+FIRMWARE_VERSION:=$(SW_VERSION_MAJOR).$(SW_VERSION_MINOR).$(SW_VERSION_PATCH).$(SW_VERSION_BUILD)-$(BUILD_DATE)
+
+ifdef BUILD_SUFFIX
+override TEMP_SUFFIX := $(patsubst %,_%,$(BUILD_SUFFIX))
+endif
+
+
+
+SPECIFIC_OUTFILE_NAME:=$(PRODUCT_NAME)-$(FIRMWARE_VERSION)$(TEMP_SUFFIX)
+
+ARM11_ATOM_IMAGE_TYPE:=uImageArm11Atom.img
+ARM11_ATOM_IMAGE_NAME:=$(COMMON_OUTFILE_NAME).uImage
+# ARRIS DELETE - START(not using customized image and rootfs names)
+# ARM11_CUSTOMIZED_ATOM_IMAGE_NAME:=$(SPECIFIC_OUTFILE_NAME)-Customized-Atom-uImage.img
+# ARRIS DELETE - END (not using customized image and rootfs names)
+
+SIMAGE_TYPE:=$(COMMON_OUTFILE_NAME).ubfi
+#SIMAGE_UPG_TYPE:=$(SPECIFIC_OUTFILE_NAME).img
+
+# ARRIS CHANGE
+ifeq ($(DOCSIS_SOC), PUMA6)
+  ifdef CONFIG_TI_SEPARATE_FS_IN_SEPARATE_IMAGE
+    ifeq ($(PRODUCT_NAME), vgwsdk)
+       PUMA5_ARRIS_SIMAGE_UPG=$(PRODUCT_NAME)_arris.tg_cm
+       MONO_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.tg
+       EGW_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.tg_gw
+       MONO_ATOM_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.tg.atom
+    else
+       ifeq ($(PRODUCT_NAME), dgwsdk)
+          PUMA5_ARRIS_SIMAGE_UPG=$(PRODUCT_NAME)_arris.dg_cm
+          MONO_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.dg
+          EGW_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.dg_gw
+          MONO_ATOM_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.dg.atom
+       endif
+    endif
+    MONO_INTEL_IMAGE=$(COMMON_OUTFILE_NAME).ubfi_gw
+  else
+    ifeq ($(PRODUCT_NAME), vsdk)
+       PUMA5_ARRIS_SIMAGE_UPG=$(PRODUCT_NAME)_arris.tm
+       MONO_ATOM_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.tm.atom
+    else
+       ifeq ($(PRODUCT_NAME), dsdk)
+          PUMA5_ARRIS_SIMAGE_UPG=$(PRODUCT_NAME)_arris.cm
+          MONO_ATOM_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.cm.atom
+       else
+       endif
+    endif
+  endif
+  ATOM_ARRIS_IMAGE=$(PRODUCT_NAME)_arris.atom
+else
+  PUMA5_ARRIS_SIMAGE_UPG=$(PRODUCT_NAME)_arris.bin
+  EGW_ARRIS_IMAGE=$(PRODUCT_NAME)_esafe_egw_arris.bin
+  MONO_ARRIS_IMAGE=$(PRODUCT_NAME)_mono_arris.bin
+endif
+SIMAGE_UPG_TYPE:=$(PRODUCT_NAME)_ubfi.bin
+
+ifeq ($(CONFIG_VENDOR_ARRIS_GATEWAY),y)
+  ifdef CONFIG_VENDOR_INCLUDE_SERCOMM
+    # Sercomm GWs ----------------------------------------------------------------------------------
+    GW_PATH=$(TARGET_HOME)/ti/thirdparty/sercomm
+    ifdef CONFIG_VENDOR_ARRIS_USG
+	@echo "*** Building Sercomm USG GW UBFI image"
+	UBFI_SCRIPT_FILENAME := bootscript_usg.txt
+	GW_IMAGE=gw_dual.bin
+    else
+      ifeq ($(CONFIG_VENDOR_ARRIS_DG860),y)
+	  # ARRIS Data-only GW build path
+	  @echo "*** Building Sercomm data-only GW UBFI image"
+          UBFI_SCRIPT_FILENAME := bootscript_dg.txt
+      endif
+      ifdef CONFIG_VENDOR_COMCAST    
+# 852 uses subtype 0x10, 862 uses 0x30, 870 uses 0x50    
+        ifeq ($(CONFIG_VENDOR_ARRIS_ESAFE_GW_DOWNLOAD_SUBTYPE),0x10)
+          GW_IMAGE=gw_single_ct.bin
+        else
+          GW_IMAGE=tg862_single_ct.bin
+        endif
+      else
+        ifeq ($(CONFIG_VENDOR_ARRIS_ESAFE_GW_DOWNLOAD_SUBTYPE),0x10)
+          GW_IMAGE=gw_single_na.bin
+        else
+          ifeq ($(CONFIG_VENDOR_ARRIS_ESAFE_GW_DOWNLOAD_SUBTYPE),0x30)
+            GW_IMAGE=tg862_single_na.bin
+          else
+            GW_IMAGE=dg870_dual_na.bin
+          endif
+        endif
+      endif
+    endif
+
+    SHORT_GW_ABSOLUTE_PATH=`ls -l $(GW_PATH)/$(GW_IMAGE) | awk '{print $$11}'`
+  else
+    # Intel GWs ------------------------------------------------------------------------------------
+    GW_PATH=$(TI_filesystem_basepath)
+    ifdef CONFIG_VENDOR_ARRIS_USG
+      GW_IMAGE=notsupported
+    else
+      ifeq ($(DOCSIS_SOC), PUMA5)
+        ifeq ($(CONFIG_VENDOR_ARRIS_DG860),y)
+  	    # ARRIS Data-only GW build path
+		#@echo "*** Building Intel P5 data-only GW UBFI image"
+		UBFI_SCRIPT_FILENAME := bootscript_dg.txt
+        endif
+      endif
+
+          GW_IMAGE=gw.sqfs
+    endif
+
+    SHORT_GW_ABSOLUTE_PATH=`ls -l $(GW_PATH)/$(GW_IMAGE) | awk '{print $$9}'`
+  endif
+endif
+# END ARRIS CHANGE
+
+CEFDK_GS3_IMAGE_TYPE:=uImageCefdkGS3.img
+CEFDK_GS3_IMAGE_NAME:=$(SPECIFIC_OUTFILE_NAME)_cefdk-gs3.img
+CEFDK_FS_HPMG_IMAGE_NAME:=$(SPECIFIC_OUTFILE_NAME)_cefdk-failsafe-hpmg.img
+CEFDK_FS_HP_IMAGE_NAME:=$(SPECIFIC_OUTFILE_NAME)_cefdk-failsafe-hp.img
+CEFDK_FS_GS_IMAGE_NAME:=$(SPECIFIC_OUTFILE_NAME)_cefdk-failsafe-gs.img
+CEFDK_FS_GS3_IMAGE_NAME:=$(SPECIFIC_OUTFILE_NAME)_cefdk-failsafe-gs3.img
+
+
+BUILD_DIR := $(TI_images_path)
+FSSTAMP := $(shell date +'%Y%m%d%H%M%S')
+ifdef CONFIG_TI_SYSTEM_USE_SUDO
+FS_USE_SUDO := y
+endif
+
+# Bootscript + Kernel
+BS_KERNEL_IMAGE:=.cm_kernel
+# Base FS
+BASE_FS_SQFS:=.cm_rootfs
+
+ifdef CONFIG_CPU_BIG_ENDIAN
+FS_ENDIAN := -be
+else
+FS_ENDIAN := -le
+endif
+
+ifndef CONFIG_SQUASHFS_MAX_BLOCK_SIZE
+CONFIG_SQUASHFS_MAX_BLOCK_SIZE := 131072
+endif
+
+# Section names
+IMG_KERNEL = $(BUILD_DIR)/$(KERNEL_TYPE)
+IMG_ROOT = $(BUILD_DIR)/sqfs.img
+
+# versions file name
+VERSIONS_TYPE := $(TI_FS_PATH)$(TI_etcdir)/versions
+
+ifndef CONFIG_TI_SYSTEM_SKIP_STRIP_FILESYSTEM
+ifdef CONFIG_TI_SYSTEM_UCLIBC_DEBUG
+STRIP_EXCEPTIONS := grep -v 0.9.32 |
+endif
+
+STRIP_LIST_TMP := $(shell find $(TI_filesystem_path) -type f | $(STRIP_EXCEPTIONS) xargs file | grep ELF | grep 'not stripped' | awk -F: '{print $$1}')
+STRIP_LIST := $(patsubst $(TI_filesystem_path)%,$(TEMP_BUILD_DIR)/fs_temp%,$(STRIP_LIST_TMP))
+
+endif
+
+.PHONY: img_complete fs_root fs_strip gen_ver upd_conf fs_lib_opt
+
+all: img_complete
+
+fs_lib_opt:
+
+ifneq ($(CONFIG_TI_SYSTEM_SKIP_OPT_LIBS),y)
+	@echo "*** Optimizing shared libraries..."
+	@rm -rf $(TEMP_BUILD_DIR)/fs_temp/libtmp
+	@mkdir $(TEMP_BUILD_DIR)/fs_temp/libtmp
+	@rm -f $(TARGET_HOME)/ti/lib/libc_pic.a $(TARGET_HOME)/ti/lib/libpthread_pic.a $(TARGET_HOME)/ti/lib/libdl_pic.a $(TARGET_HOME)/ti/lib/libm_pic.a
+	@ # ARRIS ADD BEGIN : mklib.py seems to strip all symbols not used by execulatbles.  
+	@ # In most builds, only https_plugin.so needs libssl, so libssl.so is gutted.
+	@ # removing the xxx_pic.a file causes mklib.py skip optimizing the .so
+	@rm -f $(TARGET_HOME)/ti/lib/libssl_pic.a
+ifdef CONFIG_VENDOR_ARRIS_GATEWAY_TR69
+	@rm -f $(TARGET_HOME)/ti/lib/libcrypto_pic.a
+endif	
+	@ # ARRIS ADD END
+	@find $(TEMP_BUILD_DIR)/fs_temp -type f | xargs file | grep "ELF 32-bit" | awk -F":" '{print $$1}' | grep -v "\.ko" | grep -v "\.so" | xargs python $(SCRIPTS_DIR)/mklibs.py -D -L $(TEMP_BUILD_DIR)/fs_temp/lib:$(TARGET_HOME)/ti/lib --ldlib $(TEMP_BUILD_DIR)/fs_temp/lib/ld-uClibc-0.9.32.so --libc-extras-dir $(TARGET_HOME)/ti/system/src/uClibc/lib --target $(CROSS) -d $(TEMP_BUILD_DIR)/fs_temp/libtmp
+	@cp -f $(TEMP_BUILD_DIR)/fs_temp/libtmp/* $(TEMP_BUILD_DIR)/fs_temp/lib
+	@rm -rf $(TEMP_BUILD_DIR)/fs_temp/libtmp
+endif
+
+fs_strip:
+ifneq ($(STRIP_LIST),)
+ifeq ($(CONFIG_VENDOR_ARRIS_BACKTRACE_SYMBOLS),y)
+	@echo "*** Adding backtrace symbols..."
+	for f in $(STRIP_LIST); do \
+		if [ -f $$f ]; then \
+			$(TARGET_HOME)/tools/bin/mkminidebug.sh $$f; \
+		fi; \
+	done
+else
+	@echo "*** Stripping ELF binaries..."
+	@$(CROSS_TOOLS)strip --strip-unneeded -R .note -R .comment $(STRIP_LIST)
+endif
+endif
+
+fs_rm_static_libs:
+
+fs_touch_rcs:
+#	@$(MAKE) -C $(TARGET_HOME)/ti/system/src/basefilesystem -f Makefile.flat install_rcs
+
+fs_temp_dir:
+	@rm -rf $(TEMP_BUILD_DIR)
+	@mkdir $(TEMP_BUILD_DIR)
+	@mkdir $(TEMP_BUILD_DIR)/fs_temp
+	@cd $(TI_filesystem_path) ;chmod -R 777 . ;  find ./* -maxdepth 0 ! -name dev -exec cp -a \{\} $(TEMP_BUILD_DIR)/fs_temp \; 
+
+fs_root:
+	@echo "*** Preparing var/ directory..."
+	@cd $(TEMP_BUILD_DIR)/fs_temp; tar cf var.tar var
+	@cp $(TEMP_BUILD_DIR)/fs_temp/var.tar $(TI_filesystem_path) 
+	@rm -rf $(TEMP_BUILD_DIR)/fs_temp/var/*
+
+	@echo "*** Preparing Root filesystem..."
+	@rm -f $(IMG_ROOT)
+ifeq ($(FS_USE_SUDO),y)
+	@rm -rf $(TEMP_BUILD_DIR)/fs_temp/dev
+	@mkdir -p $(TEMP_BUILD_DIR)/fs_temp/dev
+	@sudo mknod $(TEMP_BUILD_DIR)/fs_temp/dev/console c 5 1
+	@mkdir -p $(TEMP_BUILD_DIR)/fs_temp/dev/tts
+	@sudo mknod $(TEMP_BUILD_DIR)/fs_temp/dev/tts/0 c 4 64
+# ARRIS CHANGE removed the -Xbcj arm,armthumb section as it applies only be little endian and the arm decompressor not compiled in kernel by default
+	@$(TARGET_HOME)/tools/bin/mksquashfs $(TEMP_BUILD_DIR)/fs_temp/* $(IMG_ROOT) -comp xz  -all-root -b $(CONFIG_SQUASHFS_MAX_BLOCK_SIZE) -nopad
+# ARRIS CHANGE END
+else
+#	@$(MAKE) -C $(TARGET_HOME)/ti/system/src/basefilesystem -f Makefile.flat TARGET=$(IMG_ROOT) install_devnodes
+	@ #changed version from 3.3 to 4.2, removed option -be, added option --comp xz -Xbcj arm,armthumb
+
+# ARRIS CHANGE removed the -Xbcj arm,armthumb section as it applies only be little endian and the arm decompressor not compiled in kernel by default
+#	@$(TARGET_HOME)/tools/bin/mksquashfs $(TEMP_BUILD_DIR)/fs_temp/* $(IMG_ROOT) -comp xz -all-root -b $(CONFIG_SQUASHFS_MAX_BLOCK_SIZE) -nopad
+# ARRIS CHANGE END
+endif
+	@$(RM) -rf $(TEMP_BUILD_DIR)
+#	@chmod a-x+r $(IMG_ROOT)
+	@echo "*---------------------------------------------------"
+	@echo "* Filesystem created"
+	@echo "* Build dir: $(BUILD_DIR)"
+	@echo "*---------------------------------------------------"
+
+# All directories under TI_filesystem_basepath besides:
+# - the System FS
+# All shell variables must be dollar escaped ($$var)
+# Copy to temp && strip
+
+fs_other:
+	@mkdir -p $(TEMP_BUILD_DIR)$(CONFIG_TI_SEPARATE_FS_ROOT_NAME)
+ifneq ($(CONFIG_VENDOR_ARRIS_BACKTRACE_SYMBOLS),y)
+else
+	@cd $(TI_filesystem_basepath); \
+	sqfs_files=`ls -1 | grep -v $(TI_filesystem_basefs_name)`; \
+	echo "*** sqfs_files = $$sqfs_files";  \
+	for d in $$sqfs_files; do \
+		if [ -d $$d ]; then \
+			echo "*** Processing $$d";  \
+			mkdir $(TEMP_BUILD_DIR)$(CONFIG_TI_SEPARATE_FS_ROOT_NAME)/$$d; \
+			cp -r $$d $(TEMP_BUILD_DIR)$(CONFIG_TI_SEPARATE_FS_ROOT_NAME)/$$d; \
+			echo "*** Adding backtrace symbols..."; \
+			arr=($$(find $(TEMP_BUILD_DIR)$(CONFIG_TI_SEPARATE_FS_ROOT_NAME)/$$d -type f | xargs file | grep ELF | grep 'not stripped' | awk -F: '{ print $$1 }' )); \
+			for f in "$${arr[@]}"; do \
+				$(TARGET_HOME)/tools/bin/mkminidebug.sh $$f; \
+			done; \
+			echo "*** Removing unneeded archive files..."; \
+			arr2=($$(find $(TEMP_BUILD_DIR)$(CONFIG_TI_SEPARATE_FS_ROOT_NAME)/$$d -type f -name '*.a' -o -name '*.la' )); \
+			echo "array size: $${#arr2[@]}"; \
+			for f in "$${arr2[@]}"; do \
+				echo "removing $$f"; \
+				rm -f $$f; \
+			done; \
+			echo "*** Removing unneeded pkconfig dir..."; \
+			arr3=($$(find $(TEMP_BUILD_DIR)$(CONFIG_TI_SEPARATE_FS_ROOT_NAME)/$$d -type d -name 'pkgconfig' )); \
+			echo "array size: $${#arr3[@]}"; \
+			for f in "$${arr3[@]}"; do \
+				echo "removing $$f"; \
+				rm -rf $$f; \
+			done; \
+			echo "*** Processing $$d.sqfs";  \
+			rm -f $$d.sqfs;  \
+			$(TARGET_HOME)/tools/bin/mksquashfs $(TEMP_BUILD_DIR)$(CONFIG_TI_SEPARATE_FS_ROOT_NAME)/$$d/* $(TI_filesystem_basepath)/$$d.sqfs -all-root -b $(CONFIG_SQUASHFS_MAX_BLOCK_SIZE) -nopad -e .svn; \
+		fi; \
+	done
+endif
+	@$(RM) -rf $(TEMP_BUILD_DIR)
+
+# For *.sqfs, the usage of `ls ...` (instead of a simle *.sqfs) prevents an error when there are no sqfs files.
+img_complete: gen_ver upd_conf fs_touch_rcs fs_temp_dir fs_lib_opt fs_strip fs_rm_static_libs fs_root fs_other
+# ARRIS CHANGE main image creation
+#	@echo "*** Building single image file..."
+	@rm -f $(BUILD_DIR)/$(SIMAGE_UPG_TYPE)
+	@rm -f $(BUILD_DIR)/$(SIMAGE_TYPE)
+# END ARRIS CHANGE
+
+	@echo "--------------------------------------------------------------------------------"
+	@echo "*  Intel $(PRODUCT) Distribution"
+	@echo "*  SoC: $(DOCSIS_SOC)"
+	@echo "*  Build date: $(shell date -R) :"
+	@echo "--------------------------------------------------------------------------------"
+
+#-----------------------------------------------
+# Build version information
+#-----------------------------------------------
+gen_ver:
+	@echo "IMAGE_NAME=$(SIMAGE_UPG_TYPE)" > $(VERSIONS_TYPE)
+	@echo "VERSION=$(SW_VERSION_MAJOR).$(SW_VERSION_MINOR).$(SW_VERSION_PATCH).$(SW_VERSION_BUILD)" >> $(VERSIONS_TYPE)
+	@echo "FSSTAMP=$(FSSTAMP)" >> $(VERSIONS_TYPE)
+
+upd_conf:
+	@cp -f $(TARGET_HOME)/.config $(TI_FS_PATH)$(TI_etcdir)/config
+
+# ARRIS ADD - Start - Copy MSO defaults to filesystem
+ifeq ($(CONFIG_VENDOR_INCLUDE_SERCOMM),y)
+	@echo "*** Adding Gateway MSO defaults to filesystem..."
+	@cp -f $(GW_PATH)/MSO/gw_mso_defaults.* $(TI_FS_PATH)$(TI_etcdir)/
+	@chmod 644 $(TI_FS_PATH)$(TI_etcdir)/gw_mso_defaults.*
+endif
+# ARRIS ADD - End
+

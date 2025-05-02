@@ -1,0 +1,254 @@
+config TI_DOCSIS
+	bool "DOCSIS component"
+	default y
+        select TI_SSL
+	select TI_SHMDB
+	select TI_ICC
+	select TI_TLVPARSER
+	select TI_STATEMACHINE
+	select TI_NVM
+        select TI_PCD
+
+	help
+	Enable DOCSIS support
+
+config TI_DOCSIS_DEBUG
+	bool "Debug mode"
+	depends	TI_DOCSIS
+	default n
+
+config TI_DOCSIS_MAC14
+	bool "MAC14 image"
+	depends	TI_DOCSIS
+	default n
+
+config TI_DOCSIS_BPI23
+	bool "BPI23 image"
+	depends	TI_DOCSIS
+	default n
+
+config TI_D3_DISPATCHER
+	bool "D3 Dispatcher"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_BPI
+	bool "D3 Base Line Privacy"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_SW_DL
+	bool "D3 Software Download"
+	depends	TI_DOCSIS
+	default y
+
+config TI_DS_MNGR
+	bool "Downstream Manager"
+	depends	TI_DOCSIS
+	default y
+
+config TI_US_MNGR
+	bool "Upstream Manager"
+	depends	TI_DOCSIS
+	default y
+
+config TI_SEND_MNGT_MSG
+	bool "Send Management Message"
+	depends	TI_DOCSIS
+	default y
+	
+config TI_D3_ROLL_BACK
+	bool "D3 Roll back"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_MAC_MNGR
+	bool "D3 MAC Manager"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_UCD_MNGR
+	bool "D3 UCD Manager"
+	depends	TI_DOCSIS
+	default y
+	
+config TI_D3_DS_SG_RESOLUTION
+	bool "D3 DS SG Resolution"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_REGISTRATION
+        bool "D3 Registration"
+	depends	TI_DOCSIS
+        default y
+
+config TI_D3_REGISTRATION_TEST
+	bool "D3 Registration test"
+	depends	TI_DOCSIS
+	default n
+
+config TI_D3_MDD_DB
+	bool "D3 MDD DB"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_MDD_DB_TEST
+	bool "D3 MDD DB test"
+	depends	TI_DOCSIS
+	default n
+
+config TI_D3_MDD_COLLECT
+	bool "D3 MDD Collect"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_MDD_COLLECT_TEST
+	bool "D3 MDD Collect test"
+	depends	TI_DOCSIS
+	default n
+
+config TI_D3_FREQUENCY_SCAN
+	bool "D3 Frequency Scan"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_DS_CHANNEL_LIST_FREQ_DB
+	bool "D3 DS Channel List Freq DB"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_FREQUENCY_SCAN_TEST
+	bool "D3 Frequency Scan test"
+	depends	TI_DOCSIS
+	default n
+
+config TI_D3_CHANNEL_ACQUIRE_DS_SM_TEST
+	bool "D3 Channel Acquire DS SM test"
+	depends	TI_DOCSIS
+	default n
+
+config TI_D3_DOCSIS_MAC_DRIVER
+	bool "D3 MAC Driverr"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_CHANNEL_MANAGER
+	bool "D3 Channel Manager"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_DOCSIS_DB
+	bool "D3 database"
+	depends	TI_DOCSIS
+	default y
+	
+config TI_D3_UCD_DB
+	bool "UCD database"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_IP_DB
+	bool "D3 IP DB"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_IP_PROV
+	bool "D3 IP Provisioning"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_PROVISIONING
+	bool "D3 DOCSIS Provisioning"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_DOCSIS_MANAGER
+	bool "D3 DOCSIS Manager"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_STARTUP
+	bool "DOCSIS Startup"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_USSGRES
+	bool "DOCSIS US Sg Res"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_UTILS
+	bool "DOCSIS Utils"
+	depends	TI_DOCSIS
+	default y
+
+config TI_D3_MDD_FILTER_BY_SYNC_SA
+	bool "Filter MDD by SYNC-SA to handle MDD from multiple MAC domains"
+	depends	TI_DOCSIS
+	default y
+
+config TI_ENABLE_SPUR_DETECTION
+	bool "Enable SPUR detect PHY configuration"
+	depends	TI_DOCSIS
+	default n
+
+config TI_DOCSIS_MIMO_DEFAULT
+	int "MDD IP MODE OVERRIDE Default"
+	depends	TI_DOCSIS
+	default -1
+
+config TI_ENABLE_POMPT
+	bool "Enable Primary downstream over MPEG tuner"
+	depends	TI_DOCSIS
+	default n
+
+config SUPPORT_MXL_TUNERS
+	bool "Support MXL tuners"
+	depends	TI_DOCSIS
+	default y
+	help
+	Turn this flag on in order to support MXL tuners
+
+config SUPPORT_MT_TUNERS
+	bool "Support MT tuners"
+	depends	TI_DOCSIS
+	default y
+	help
+	Turn this flag on in order to support MT tuners
+
+
+config SUPPORT_NXP_TUNERS
+	bool "Support NXP tuners"
+	depends	TI_DOCSIS
+	default y
+	help
+	Turn this flag on in order to support NXP tuners
+
+
+config DOCSIS_NUM_OF_UPSTREAM
+	int "Number of DOCSIS upstream channels supported"
+	depends	TI_DOCSIS
+	default 4
+	range 4 8
+	help
+	Modify this flag only in Puma6 MG. Puma6 MG can support up to 8 DOCSIS upstream channels. 
+
+config INTEL_SWDL_OPERATIONAL
+    bool "Perform SW Download (cfg file) while Operational"
+	depends	TI_DOCSIS
+	default y
+	help
+        When this flag is on (== y), SW Download triggered by config file will 
+        be performed while the CM is Operational, therefore CPE traffic is also 
+        enabled during the SW Download. When this flag is off, SW Download 
+        triggered by config file will be performed BEFORE the CM is operational, 
+        therefore CPE traffic is disabled during SW Download
+
+
+config SUPPORT_PWR_SPECTRUM
+	bool "Support power spectrum"
+	depends	TI_DOCSIS
+	default y
+	help
+	Turn this flag on in order to support power spectrem measurement feature
+

@@ -1,0 +1,813 @@
+config TI_COMMON_COMPONENTS
+    bool "TI common components"
+    default y
+    help
+     Enable support for system common components and services
+
+config TI_PCD
+    bool "Enable Process Control Daemon"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build Process Control Daemon which controls the init sequence and monitors processes.
+
+config TI_PCD_DEBUG
+    bool "Enable PCD debug options"
+    default n
+	depends	TI_PCD
+	help
+                Enable PCD debug options
+
+config TI_SHMDB
+    bool "Shared Memory Database support"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build TI shared memory module
+
+config TI_TLVPARSER
+    bool "TLV Parser service"
+	default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build TI TLV Parser module
+config TI_GIM
+    bool "Enable General Interface Module"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build General Interface Module which provides a unisom way to provide callbacks to an external application.
+
+config INTEL_EXPAT
+	bool "EXPAT Library"
+	default y
+	help
+		Enable or Disable EXPAT Library.
+
+menu "ICC Configuration"
+config TI_ICC
+    bool "Inter-Context Communication service"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build TI Inter Context Communication service
+
+config TI_ICC_DEFAULT_ENDPOINTS
+    int "Default endpoints"
+    default 120
+	depends	TI_COMMON_COMPONENTS
+	help
+                Configure maximum endpoints (Default 120)
+
+config TI_ICC_DEFAULT_SHM_SIZE
+    int "Default shared memory size (Default 512K)"
+    default 512000
+	depends	TI_COMMON_COMPONENTS
+	help
+                Configure maximum shared memory size (Default 512K)
+
+config TI_ICC_DEBUG
+    bool "Enable ICC debug options"
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Enable ICC debug options, through iccctl utility
+
+config TI_ICC_DEBUG_EXT_SHM_SIZE
+	int "Extra shared memory for debugging"
+	default TI_ICC_DEFAULT_SHM_SIZE
+		depends TI_ICC_DEBUG
+		help 
+			Configure extra shared memory for debugging, default 2MB for PUMA6_SOC, 512KB for PUMA5_SOC
+
+config TI_ICC_DEBUG_TRS
+	int "Messages threshold (in millseconds)"
+	default 1000
+		depends TI_ICC_DEBUG
+		help 
+			Configure threshold in milliseconds to print allocated messages
+endmenu
+
+config TI_SNMP_AGENT
+    bool "Envoy - SNMP agent support"
+	depends	TI_COMMON_COMPONENTS
+    default y
+	help
+                Build Envoy snmp agent and wrapper
+
+config TI_EVENT_MGR
+    bool "Event Manager support"
+	depends	TI_COMMON_COMPONENTS
+    default y
+	help
+                Build the event manager
+
+menu "Logger Configuration"
+config TI_LOGGER
+    bool "Logger support"
+	depends	TI_COMMON_COMPONENTS && TI_ICC
+    default y
+	help
+                Bulid Logger (debug output)
+
+config TI_LOGGER_DESTINATION_IP
+    string "Default Destination IP"
+    default "192.168.100.100"
+    depends TI_LOGGER
+	help
+                When the UDP target is enabled, this is the IP address of the remote server to send the logger messages
+
+config TI_LOGGER_DESTINATION_PORT
+    int "Default Destination Port"
+    default 4571
+    depends TI_LOGGER
+	help
+                When the UDP target is enabled, this is the PORT of the remote server to send the logger messages
+
+config TI_LOGGER_DEBUG_ENABLE
+    bool "Enable Logger Debug level"
+    default n
+    depends TI_LOGGER
+	help
+                Select this option to enable Debug prints.
+                Disabling this option reduces memory footprint.
+
+config TI_LOGGER_INFO_VERBOSE_ENABLE
+    bool "Enable Logger INFO-verbose level"
+    default n
+    depends TI_LOGGER
+	help
+                Select this option to enable verbosed information prints.
+                Disabling this option reduces memory footprint.
+
+config TI_LOGGER_FUNCTION_LINE_DISPLAY_ENABLE
+    bool "Enable Logger Function:Line display"
+    default n
+    depends TI_LOGGER
+	help
+                Select this option to enable Function:Line display in logs.
+                Disabling this option reduces memory footprint.
+
+config TI_LOGGER_FILENAME
+    string "Log filename"
+    default "/var/tmp/logfile.log"
+    depends TI_LOGGER
+	help
+                Setup Logger output file for the file target
+
+config TI_LOGGER_REBOOT_ON_FATAL
+    bool "Enable reboot upon a FATAL log message"
+    default n
+    depends TI_LOGGER
+	help
+                Select this option to enable system reboot upon a FATAL message
+
+config TI_LOGGER_BYTES_LIMIT
+    int "Maximum Logger message queue in bytes"
+    default 20000
+    depends TI_LOGGER
+	help
+                Define the maximum Logger queue length in bytes. Exceeding messages will be ignored.
+
+config TI_LOGGER_MESSAGE_LIMIT
+    int "Maximum Logger message queue length"
+    default 100
+    depends TI_LOGGER
+	help
+                Define the maximum amount of messages the logger quque is allowed to hold. Exceeding messages will be ignored.
+
+endmenu
+
+config TI_STATEMACHINE
+	bool "State machine engine support"
+	default y
+	depends	TI_COMMON_COMPONENTS && TI_SHMDB && TI_ICC
+	help
+                Build TI state machine engine
+
+menu "NVRAM Manager Configuration"
+config TI_NVM
+    bool "NVRAM Manager"
+    default y
+	depends	TI_COMMON_COMPONENTS
+    select JFFS2_FS
+    select JFFS2_COMPRESSION_OPTIONS
+	help
+                Build NVRAM Manager
+
+config TI_NVM_PATH
+    string "NVM Manager path"
+    default "/nvram/"
+	depends	TI_NVM
+	help
+                Path to the root of the mounted filesystem for NVM
+endmenu
+
+config TI_NET_STATS
+    bool "Networking statistics service"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Enable Networking statistics service (e.g. IP mibs, bridge mibs, etc.)
+
+menu "GPTimer Configuration"
+
+config TI_GPTIMER
+    bool "General purpose timer daemon support"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Enable General purpose timer daemon support
+
+choice
+	prompt "GPTimer implementation"
+	default TI_GPTIMER_TICKLESS
+		depends TI_GPTIMER
+
+config TI_GPTIMER_TICKLESS
+	bool "New GPTimer implementation"
+
+config TI_GPTIMER_OLD
+	bool "Old GPTimer implementation"
+
+endchoice
+
+endmenu
+
+config TI_BBU
+    bool "Battery Backup Unit"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Monitors Batteries
+
+
+config TI_NETUTILS
+    bool "Network utilities"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Enable network utilities API
+
+menu "Environment Utilities Configuration"
+config TI_ENVUTILS
+    bool "Environment utilities"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Enable API to read and write to U-Boot environment variables from the user space.
+                Add printenv, getenv and setenv utilities to the shell.
+
+config TI_ENVUTILS_DEFAULT_SECTOR_SIZE
+    hex "Default flash sector size"
+    default 0x10000
+	depends	TI_ENVUTILS
+	help
+                Default flash sector size, in case auto-detection fails to determine it
+
+config TI_ENVUTILS_USE_CONFIG_FILE
+    bool "Install and use configuration file"
+    default n
+	depends	TI_ENVUTILS
+	help
+                Install and use the config file in /etc/fw_env.config and disable auto-detection
+endmenu
+
+config TI_COMMONUTILS
+    bool "Common utilities"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Enable general common API
+
+menu "Common Utilities Configuration"
+config TI_CLI
+    bool "Command Line Interface (CLI) support"
+	depends	TI_COMMON_COMPONENTS
+    default y
+	help
+                Build TI Command line interface engine
+
+config TI_WATCHDOG_RT
+    bool "Build TI Realtime watchdog daemon"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build TI Realtime watchdog daemon
+
+config TI_SCHED_UTIL
+    bool "Build TI Scheduling utility"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build TI Scheduling utility which can display and set all processes scheduling
+
+config TI_EXMAP_UTIL
+    bool "Build Exmap utility"
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build Exmap utility for memory analysis (debug only)
+
+config TI_DMALLOC_UTIL
+    bool "Build dmalloc utility"
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build dmalloc utility, a memory debugger C library (debug only)
+                It helps the programmer detect buffer overflows
+
+config TI_IOSTAT_UTIL
+    bool "Build iostat utility"
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build iostat utility, a monitoring tool used to collect and display
+                cpu load, input and output device statistics. (debug only)
+
+config TI_PORTMAP_UTIL
+    bool "Build Portmap server for RPC"
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build Portmap server. Portmap is server software that converts RPC program
+                numbers into DARPA protocol port numbers. It must be running in order to make RPC calls.
+                Note: Must activate RPC support in uClibc!
+
+config TI_ETHTOOL_UTIL
+    bool "Build ethtool"
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build ethtool utility. The ethtool configures Linux Ethernet drivers and is used in this
+                SDK for enabling or disabling LRO support in runtime for CPGMAC and CNI.
+
+config TI_TCPDUMP_UTIL
+    bool "Build tcpdump"
+    default n
+	depends	TI_COMMON_COMPONENTS 
+	select TI_LIBPCAP
+	help
+                Build tcpdump utility. The tcpdump utility is a sniffing utility that enables capturing
+		packets from the network interface and displaying their content. 
+
+config TI_LIBPCAP
+    bool "Libpcap library"
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build libpcap library this is a packet capture library, It is used as an infrastructure
+		for tcpdump.
+
+config TI_MMC_UTIL
+    bool "Build eMMC F/W upgrade utilities"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build eMMC utilities to perform eMMC F/W upgrade
+
+
+config TI_MMC_PHISON_UTIL_SRC
+	bool "Build Phison F/W upgrade utility"
+    default n
+       	depends	TI_MMC_UTIL
+	help
+	Build Phison utility to perform eMMC F/W upgrade (Select this only if you have source files)
+
+
+endmenu
+
+menu "Common Soap Client"
+
+config INTEL_LUA
+    bool "lua language support"
+	default n
+	help
+		Enable lua interpreter
+		
+config INTEL_LUAEXT
+    bool "lua extentions"
+    depends INTEL_LUA && INTEL_EXPAT
+	default n
+	help
+		Enable Lua extension libraries for soap server
+
+endmenu
+
+menu "System startup configuration menu"
+config TI_SYSTEM_STARTUP_DEFAULT_FILENAME
+    string "Default filename"
+	depends	TI_COMMON_COMPONENTS
+    default "/etc/scripts/sys_startup.sh"
+    help
+     Default filename to execute at system startup
+
+config TI_SYSTEM_STARTUP_ENABLE_AUTO_RUN
+    bool "Enable auto run by default"
+	depends	TI_COMMON_COMPONENTS
+    default y
+    help
+     Default value for auto start flag (Enable auto run)
+
+endmenu
+
+menu "Debug options"
+
+config TI_COMMON_COMPONENTS_DEBUG
+    bool "Compile Common components with debug symbols"
+	depends	TI_COMMON_COMPONENTS
+    default n
+    help
+     Compile Common components with debug symbols, for debug purposes
+
+config TI_COMMON_COMPONENTS_TEST_APPS
+    bool "Compile Common components test applications"
+	depends	TI_COMMON_COMPONENTS
+    default n
+    help
+     Compile Common components test applications
+
+config TI_PCD_TEST
+    bool "PCD Test applications"
+    default n
+	depends	TI_COMMON_COMPONENTS_TEST_APPS && TI_PCD
+	help
+                Build Process Control Daemon test application
+
+config TI_ICC_TEST
+    bool "ICC Test applications"
+    default n
+	depends	TI_COMMON_COMPONENTS_TEST_APPS && TI_ICC
+	help
+                Build TI Inter Context Communication test applications
+
+config TI_SHMDB_TEST
+    bool "Shared memory database Test applications"
+    default n
+	depends	TI_COMMON_COMPONENTS_TEST_APPS && TI_SHMDB
+	help
+                Build TI Shared memory database test applications
+
+config TI_NVM_TEST
+    bool "NVM Manager test application"
+    default n
+	depends	TI_COMMON_COMPONENTS_TEST_APPS && TI_NVM
+	help
+                Build TI NVRAM Manager test applications
+
+config TI_LOGGER_TEST
+    bool "Logger Test Module"
+    default n
+    depends TI_COMMON_COMPONENTS_TEST_APPS && TI_LOGGER
+	help
+                Select this option to compile a test module for the logger
+
+config TI_EVENT_MGR_TEST
+    bool "Event Manager Test Module"
+    default n
+    depends TI_COMMON_COMPONENTS_TEST_APPS && TI_EVENT_MGR
+	help
+                Select this option to compile a test module for the Event Manager
+
+config TI_GPTIMER_TEST
+    bool "GP Timer Test Module"
+    default n
+    depends TI_COMMON_COMPONENTS_TEST_APPS && TI_GPTIMER
+	help
+                Select this option to compile a test module for the GP Timer
+
+config TI_GIM_TEST
+    bool "GIM Test application"
+    default n
+	depends	TI_COMMON_COMPONENTS_TEST_APPS && TI_GIM
+	help
+                Build General Interface Module test application
+endmenu
+
+menu "Memory Optimization"
+
+config TI_COMMON_COMPONENTS_SIZE_OPTIMIZATION
+    bool "Compile Common components with size optimization"
+	depends	TI_COMMON_COMPONENTS
+    default n
+    help
+     Compile Common components with size optimization (-Os)
+
+config TI_COMMON_COMPONENTS_TICC
+    bool "Build Common components unified library"
+	depends	TI_COMMON_COMPONENTS
+    default y
+    help
+     Build Common components unified library libticc.so which includes the following libraries:
+     ICC, SHMDB, Event Manager + IF, Logger, NVRAM manager, TLV Parser, SNMPA Util + SNMPA IF
+
+config TI_COMMON_COMPONENTS_NO_SO_LIBS
+    bool "Skip Common components shared libraries creation"
+	depends	TI_COMMON_COMPONENTS
+    default n
+    help
+     Skip Common components shared libraries creation of the following libraries:
+     ICC, SHMDB, Event Manager + IF, Logger, NVRAM manager, TLV Parser, SNMPA Util + SNMPA IF
+
+config TI_COMMON_COMPONENTS_UNIFIED_SNMP_AGENT
+    bool "Install Common components unified SNMP library"
+	depends	TI_SNMP_AGENT
+    default y
+    help
+     Install SNMP unified library libusnmp.so which includes the following libraries:
+     libepdes.so libepcommon.so libcommonagent.so libsnmp.so libagentutils.so
+
+config TI_COMMON_COMPONENTS_NO_SNMP_SO_LIBS
+    bool "Skip Common components SNMP shared libraries installation"
+	depends	TI_SNMP_AGENT
+    default n
+    help
+     Skip SNMP shared libraries installation of the following libraries:
+     libepdes.so libepcommon.so libcommonagent.so libsnmp.so libagentutils.so
+
+endmenu
+
+config TI_INIPARSER
+    bool "Enable INI file parser"
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build iniparser - provides a INI file handling library
+
+config COMMON_LIBELF
+    bool "libelf library"
+    default n
+	depends	TI_COMMON_COMPONENTS && SYSTEM_L2SWITCH
+	help
+                Builds libelf library
+
+config TI_LSD
+    bool "Enable LSD (LAN Side Devices) control"
+    default y
+	depends	TI_COMMON_COMPONENTS
+	select TI_INIPARSER
+	help
+                Build LSD - LAN Side Devices control
+
+config TI_SWT
+    bool "Enable Switch control"
+    default y 
+    # Otherwise
+    default n
+	depends	TI_COMMON_COMPONENTS
+	help
+                Build SWT - Switch control
+
+config SYSTEM_L2SWITCH
+	bool "L2Switch enabled"
+	default y
+	#depends	TI_COMMON_COMPONENTS && SYSTEM_PUMA6_SOC  // ARRIS MODIFY
+	select COMMON_LIBELF
+	help
+                L2Switch manager for Puma6 SoC
+
+config COMMON_COMPONENTS_IMAGE_SIGNATURE
+	depends on TI_COMMON_COMPONENTS
+	bool "Common components image signature support"
+	default y
+	help
+      Choose Y here if you wish to use the common components image signature utility
+      If unsure, choose Y.
+
+config SYSTEM_EXTERNALSWITCH
+	bool "ExternalSwitch enabled"
+	default y
+	depends	TI_COMMON_COMPONENTS
+	help
+                external Switch manager for Puma6
+
+
+menu "MoCA Configuration"
+
+config SYSTEM_MOCA
+	bool "MoCA Configuration"
+	depends	TI_COMMON_COMPONENTS && SYSTEM_PUMA6_SOC && SYSTEM_L2SWITCH
+	default n
+	help
+		Enable or Disable MoCA
+
+config SYSTEM_MOCA1_1
+        bool 
+        default n
+
+config SYSTEM_MOCA2_0
+        bool 
+        default n
+
+
+choice 
+	prompt "MoCA Implementation"
+        default INTEL_INTERNAL_MOCA1_1
+        depends SYSTEM_MOCA
+
+
+config INTEL_INTERNAL_MOCA1_1
+        bool "Intel Internal MoCA1.1"
+        select SYSTEM_MOCA1_1
+        help
+                Intel Interanl MoCA1.1
+
+config INTEL_EXTERNAL_MOCA2_0_SAMPLE
+	bool "Intel External MoCA2.0 Sample"
+        select SYSTEM_MOCA2_0
+	help
+		Intel Exteranl MoCA2.0 Sample
+
+config ENTROPIC_EXTERNAL_MOCA2_0
+	bool "Entropic External EN2710 MoCA2.0"
+        select SYSTEM_MOCA2_0
+	help
+		Entropic External EN2710 MocA2.0
+
+
+endchoice
+
+endmenu
+
+
+config SYSTEM_MARVEL88E172SWITCH
+	bool "Marvel 88E172 Switch enabled"
+	default y
+	depends	TI_COMMON_COMPONENTS && SYSTEM_L2SWITCH && SYSTEM_EXTERNALSWITCH
+	help
+                Marvel 88e172 Switch manager for Puma6
+
+
+config SYSTEM_REALTEKSWITCH
+	bool "RealtekSwitch enabled"
+	default y
+	depends	TI_COMMON_COMPONENTS && SYSTEM_EXTERNALSWITCH
+	help
+                Realtek Switch manager for Puma6
+
+config SYSTEM_BROADCOMSWITCH
+	bool "BroadcomSwitch enabled"
+	default n
+	depends	TI_COMMON_COMPONENTS && SYSTEM_EXTERNALSWITCH
+	help
+                Broadcom Switch manager for Puma6
+
+menu "Wireless LAN Configuration"
+
+    config TI_WLAN_ENABLE
+        bool "Wlan"
+        select NET_RADIO if SYSTEM_PUMA5_SOC
+        select NET_WIRELESS_RTNETLINK if SYSTEM_PUMA5_SOC
+        default n
+        help
+            Enable or Disable Wireless LAN
+    
+    config TI_WLAN_RALINK_RT3352_iNIC
+        bool "Ralink RT3352_iNIC wlan platforms"
+        # Only for P5 boards
+        depends on TI_WLAN_ENABLE && SYSTEM_PUMA5_SOC
+        default n
+        help
+            Enable or Disable Ralink wlan platform - RT3352_iNIC
+
+endmenu
+
+config INTEL_WIFI_CFG_CLIENT
+    bool "WLAN Configuration Client"
+       #depends	SYSTEM_PUMA6_SOC  // ARRIS MODIFY
+       #default y if SYSTEM_PUMA6_SOC && TI_GW  // ARRIS MODIFY
+       default n
+       help
+		Enable or Disable WLAN Configuration Client
+
+choice
+        prompt "WLAN Configuration Client implementation"
+	default RPC_WLAN_CFG_CLIENT
+	depends INTEL_WIFI_CFG_CLIENT
+
+config RPC_WLAN_CFG_CLIENT
+bool "XDR RPC WLAN configuration client"
+help
+        Enable or Disable RPC WLAN Configuration Client
+
+
+config SOAP_RPC_WIFI_CFG_CLIENT
+bool "LUA SOAP RPC WLAN configuration client"
+        select INTEL_LUA
+        select INTEL_LUAEXT
+help
+        Enable or Disable Lua SOAP RPC WLAN Configuration Client
+
+endchoice
+
+config INTEL_WIFI_CFG_CLIENT_SAMPLE
+bool "A sample executable for Lua SOAP RPC WLAN Configuration client"
+default n
+depends SOAP_RPC_WIFI_CFG_CLIENT
+help
+sample executable for Lua WLAN configuration client
+
+
+config INTEL_PRIMARY_LAN_INTERFACE_NAME
+    string "Name of primary LAN netwrok interface"
+    default "eth0" if !SYSTEM_L2SWITCH
+    default "l2sd0" if SYSTEM_L2SWITCH
+    help
+        The name of the network interface representing the primary LAN interface
+
+menu "Management RPC configuration"
+
+config SYSTEM_RPC_MANAGEMENT
+	bool "RPC Management enabled"
+	default y
+	#depends	TI_COMMON_COMPONENTS && SYSTEM_PUMA6_SOC  // ARRIS MODIFY
+	depends	TI_COMMON_COMPONENTS
+	select TI_PORTMAP_UTIL
+	select VCONFIG
+	help
+               RPC management for Puma6 SoC
+
+config SYSTEM_RPC_IF_NPCPU_ADDR
+    string "NP-CPU IPv4 address of the RPC-IF"
+    default "192.168.254.253"
+    depends	TI_COMMON_COMPONENTS && SYSTEM_RPC_MANAGEMENT
+    help
+        The NP-CPU IPv4 address of the RPC LAN interface
+
+config SYSTEM_RPC_IF_APPCPU_ADDR
+    string "APP-CPU IPv4 address of the RPC-IF"
+    default "192.168.254.254"
+    depends	TI_COMMON_COMPONENTS && SYSTEM_RPC_MANAGEMENT
+    help
+        The APP-CPU IPv4 address of the RPC LAN interface
+
+
+config SYSTEM_RPC_IF_NETMASK
+    string "IPv4 network mask for the RPC-IF"
+    default "255.255.255.0"
+    depends	TI_COMMON_COMPONENTS && SYSTEM_RPC_MANAGEMENT
+    help
+        The IPv4 network mask for RPC LAN interface
+
+config SYSTEM_RPC_IF_VLAN_ID
+    int "VLAN ID (tag) for the RPC-IF"
+    default 4093
+    range 0 4093
+    depends	TI_COMMON_COMPONENTS && SYSTEM_RPC_MANAGEMENT
+    help
+        The VLAN ID for RPC LAN interface.
+        A valid VLAN ID is from 2-4093.
+        If you need to disable VLAN for this RPC LAN interface, please select 0 as in this option.
+endmenu
+
+config INTEL_TRACE_CMD
+    bool "trace-cmd"
+    default n
+    depends	TI_COMMON_COMPONENTS
+    select FTRACE
+    help
+        Build trace-cmd
+
+config INTEL_ETH_PHY
+        bool "Ethernet PHY support"
+        default n
+        depends SYSTEM_PUMA6_SOC
+        help
+                Daemon and/or API that support external ETH PHYs
+
+config INTEL_RTL8211_ETH_PHY
+        bool "RTL8211 Ethernet PHY API"
+        default y
+        depends INTEL_ETH_PHY
+        help
+                Control RTL8211 external ethernet PHY
+
+config INTEL_ETH_PHY_MANAGER
+        bool "Ethernet PHY manager"
+        default y
+        depends INTEL_ETH_PHY
+        help
+                Daemon that controls external ETH PHYs
+		
+		
+config SYSTEM_APPPSM
+	bool "Enable PSM application"
+	depends TI_COMMON_COMPONENTS
+	default n
+	help	
+		This value enables the PSM APP
+
+config SYSTEM_LPCM
+	bool "Enable LPCM application"
+	depends SYSTEM_APPPSM
+	default n
+	help	
+		This value enables the LPCM APP
+
+config SYSTEM_LPCM_TEST
+	bool "Enable TEST LPCM application"
+	depends TI_COMMON_COMPONENTS && SYSTEM_LPCM
+	default n
+	help	
+		This enables the LPCM TEST APP
+

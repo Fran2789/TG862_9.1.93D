@@ -1,0 +1,22 @@
+
+Intel Puma Toolchain generation 
+ 
+Version 03 - update uClibc to   gcc to 4.7.3
+
+Preliminary requirements for build server 
+- Linux Server 
+- GNU Make 3.81 or better
+- unifdef application version 2.4
+- gcc version 3.4.6 
+- gawk/awk version 3.1.5
+- autotools version 2.65
+- module-init-tools 3.2.2 
+- liblzma 5.0.3 (need for xzcat)
+
+
+Instalation process
+- Define INTEL_PUMA_TOOLCHAIN_INSTALL_DIR
+	export INTEL_PUMA_TOOLCHAIN_INSTALL_DIR="/data/puma5-toolchain" for instance
+- run build-toolchain.sh, The toolchain will be install at INTEL_PUMA_TOOLCHAIN_INSTALL_DIR
+- Add $INTEL_PUMA_TOOLCHAIN_INSTALL_DIR/usr/bin/ to $PATH
+

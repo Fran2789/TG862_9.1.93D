@@ -1,0 +1,11 @@
+--- gcc-4.6.0/Makefile.in.orig	2011-08-31 17:46:24.233708002 +0300
++++ gcc-4.6.0/Makefile.in	2011-08-31 17:45:23.893708001 +0300
+@@ -46155,7 +46155,7 @@
+ 	libsrcdir="$$s/libstdc++-v3"; \
+ 	rm -f no-such-file || : ; \
+ 	CONFIG_SITE=no-such-file $(SHELL) $${libsrcdir}/configure \
+-	  $(TARGET_CONFIGARGS) --build=${build_alias} --host=${target_alias} \
++	  $(TARGET_CONFIGARGS) --enable-clocale=auto --build=${build_alias} --host=${target_alias} \
+ 	  --target=${target_alias} $${srcdiroption}  \
+ 	  || exit 1
+ @endif target-libstdc++-v3

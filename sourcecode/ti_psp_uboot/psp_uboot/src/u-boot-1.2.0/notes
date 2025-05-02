@@ -1,0 +1,202 @@
+- download u-boot 1.2.0
+
+- select (cross) compiler --> CROSS_COMPILE=arm_v6_be_uclibc-
+
+Folder structure:
+=================
+    ./cpu/arm1176           --> cpu code for arm1176
+    ./cpu/arm1176/puma5		--> soc code for puma5
+    ./board/tnect550		--> board code
+
+	- better to also create board/volcano ?
+
+Files:
+============
+	./cpu/arm117/start.S		--> reset vector
+	./cpu/arm117/cpu.c		--> 
+	./cpu/arm117/interrupts.c	--> 
+	./cpu/arm117/config.mk		--> cpu flags
+	./cpu/arm117Makefile		--> build rules
+	
+	./cpu.arm1176/puma5/Makefile	--. build rules for lib$SOC.a
+
+	./include/configs/tnetc550.h	--> chip sel, mem maps...
+
+    ./board/tnect550/tnetc550.c		--> 
+    ./board/tnect550/config.mk		--> u-boot image config (eg. base)
+    ./board/tnect550/Makefile		--> build rules
+    ./board/tnect550/u-boot.lds		--> linking
+    ./board/tnect550/lowlevel_init.S	--> Board spec init (called from start.S)
+
+
+
+Modifying Makefile
+========================
+	- Add following:
+
+tnetc550_config: unconfig
+        @$(MKCONFIG) $(@:_config=) arm arm1176 tnetc550 NULL puma5
+				...................................	
+				   [arch cpu board vendor soc]
+	
+
+FLASH start address on volcano maars
+=====================================
+3000_0000
+
+file -> board/tnetc550/config.mk
+
+Building
+==============
+make CROSS_COMPILE=arm_v6_be_uclibc-
+
+h/w setup
+===========
+1. cache
+2. mmu
+3. clk/pll
+4. emif, cs
+
+./board/tnect550/lowlevel_init.S
+
+- added file init_emif.S in /board
+- using EMIF #defs in volcano_dut_puma5.inc
+
+12 Apr 2007
+============
+eth_ccpi41.c
+
+16 APR
+=========
+- Need to disable "options negotiation" at TFTP Server side since the ACK sent
+  by u-boot for OACK is treated as "undefined error" by server
+    - is this prob because of cache disabled (slow)?     
+
+- download speed w/ 
+    - icache disabled = 
+    - icache enabled = 37 B/s
+    - icache & dcache enabled = 120 B/s to 80 B/s 
+    
+
+
+17 Apr 2007
+============
+
+-> flash (intel 28Fxx for volcano)
+
+Tue 17 Apr 2007 12:22:18 PM IST
+================================
+Added flag -mno-thumb-interwork as PLATFORM_CPPFLAGS in board/tnetc550/config.mk 
+
+board/tnetc550/config.mk
+==========================
+TEXT_BASE = 0x11FF0000  # 0x10000000 + 0x02000000 - 0x10000
+
+PLATFORM_CPPFLAGS += -mbig-endian -mno-thumb-interwork
+
+CROSS_COMPILE = arm_v6_be_uclibc-
+
+Wed 18 Apr 2007 10:44:17 AM IST
+================================
+           volcano MAARS flash :
+                1. TE28F128J3C120  Intel StrataFlash 128Mb
+                2. TE28F128J3C120  Intel StrataFlash 128Mb
+
+                16MB || 16MB = 32 MB
+                    
+Wed 18 Apr 2007 04:37:33 PM IST
+================================
+           Addded flash.c. Currently only INTEL flash mentioned above is
+           supported. Environment variables are allowed space = sector size
+           (128KB). Room of 1 sector at the top (32MB-sect_size) is kept for
+           ADAM2 environment.
+
+Wed 18 Apr 2007 05:08:46 PM IST
+================================
+           LINUX boot related stuff
+           -------------------------
+           - When CONFIG_SILENT_CONSOLE is defined, all console messages (by
+             U-Boot and Linux!) can be silenced with the "silent" environment
+             variable.  See doc/README.silent for more information.
+          *- Currently using CFG_BARGSIZE = 256 as the buffer size for boot args
+             passed to Linux.
+           - Need to config following?
+            - CFG_BOOTM_LEN:
+                            Normally compressed uImages are limited to an
+                            uncompressed size of 8 MBytes. If this is not
+                            enough, you can define CFG_BOOTM_LEN in your board
+                            config file to adjust this setting to your needs.
+
+            - CFG_BOOTMAPSZ:
+                            Maximum size of memory mapped by the startup code of
+                            the Linux kernel; all data that must be processed by
+                            the Linux kernel (bd_info, boot arguments,
+                            eventually initrd image) must be put below this
+                            limit.
+
+
+Tue 24 Apr 2007 12:02:31 PM IST
+================================
+Envirnment variables space:
+---------------------------
+- 1 sector used by u-boot
+- Currently last FLASH sector is used 
+- For volcano boards, since ADAM2 uses the last sector, u-boot is using 2nd last
+  sector
+
+- The environment occupies one whole flash sector, which is "embedded" in the
+  text segment with the U-Boot code. This happens usually with "bottom boot
+  sector" or "top boot sector" type flash chips, which have several smaller
+  sectors at the start or the end.  For instance, such a layout can have sector
+  sizes of 8, 2x4, 16, Nx32 kB. In such a case you would place the environment
+  in one of the 4 kB sectors with U-Boot code before and after it.  With "top
+  boot sector" type flash chips, you would put the environment in one of the
+  last sectors, leaving a gap between U-Boot and the environment.
+
+
+
+Making Linux Image to boot from u-boot :
+-----------------------------------------
+Make uImage
+-> arm_v6_be_uclibc-objcopy -O binary  -R .note -R .comment -S vmlinux linux.bin
+-> bzip2 -9 linux.bin
+-> mkimage -A arm -O linux -T kernel -C bzip2 -a 0 -e 0 -n "Linux Kernel Image" -d  linux.bin.bz2 uImage
+
+    To get header info 
+    -> mkimage -l uImage
+
+-> mkimage -n 'Simple Ramdisk Image' -A arm -O linux -T ramdisk -C gzip -d ramdisk-be-uclibc.gz initrd
+
+*** Need to convert the binaries to srec format if serial download is desired.
+e.g., objcopy -I binary -O srec examples/image examples/image.srec
+
+
+Boot Linux:
+-----------
+
+The "bootm" command is used to boot an application that is stored in
+memory (RAM or Flash). In case of a Linux kernel image, the contents
+of the "bootargs" environment variable is passed to the kernel as
+parameters. You can check and modify this variable using the
+"printenv" and "setenv" commands:
+
+
+        => printenv bootargs bootargs=root=/dev/ram
+
+        => setenv bootargs root=/dev/nfs rw nfsroot=10.0.0.2:/LinuxPPC nfsaddrs=10.0.0.99:10.0.0.2
+        => printenv bootargs bootargs=root=/dev/nfs rw nfsroot=10.0.0.2:/LinuxPPC nfsaddrs=10.0.0.99:10.0.0.2
+        => bootm 30020000    ---> boot
+        => imi 30020000      ---> image info
+
+                                                
+
+
+
+TODO
+====
+- Put #ifdef CONFIG_PUMA5_VOLCANO_EMU at some places in tnetc550.h and asm files
+- Provide configs for tnetc550W board
+
+
+
+

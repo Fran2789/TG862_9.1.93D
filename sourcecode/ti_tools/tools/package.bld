@@ -1,0 +1,10 @@
+/* simply list the files (or directories) to be included in the array below. */
+Pkg.otherFiles=[
+  "package.bld",
+  "package.xdc",
+  "Settings.xdc",
+  "Makefile",
+  "bin/",
+  "scripts/",
+  "src/",
+];

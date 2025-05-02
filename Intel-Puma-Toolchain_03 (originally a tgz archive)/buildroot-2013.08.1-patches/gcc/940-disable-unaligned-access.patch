@@ -1,0 +1,9 @@
+--- host-gcc-final-4.8.2/gcc/config/arm/arm.opt.orig	2014-05-12 15:48:28.958028463 +0600
++++ host-gcc-final-4.8.2/gcc/config/arm/arm.opt	2014-05-12 15:48:51.370029336 +0600
+@@ -245,5 +245,5 @@
+ that may trigger Cortex-M3 errata.
+ 
+ munaligned-access
+-Target Report Var(unaligned_access) Init(2)
++Target Report Var(unaligned_access) Init(0)
+ Enable unaligned word and halfword accesses to packed data.

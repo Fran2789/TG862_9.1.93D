@@ -1,0 +1,22 @@
+config TI_DNSC_RULI
+	bool "RULI Library - Asynchronous DNS Client Library"
+    depends on TI_NETDK
+	default y
+	help
+		Enable or Disable RULI Library(Asynchronous DNS Client).
+
+config TI_RULI_IPV6
+    bool "Enable IPv6 Support in RULI"
+    default n
+	depends on TI_DNSC_RULI
+    help
+        Enable IPv6 support in RULI. 
+
+config TI_RULI_SRV_FALLBACK
+    bool "Enable Fallback to Hostname resolution for SRV queries"
+    default n
+	depends on TI_DNSC_RULI
+    help
+        If this enabled and if a SRV query fails, i.e DNS Server responds 
+        with an error then the client falls back to resolving the domain's
+        hostname.

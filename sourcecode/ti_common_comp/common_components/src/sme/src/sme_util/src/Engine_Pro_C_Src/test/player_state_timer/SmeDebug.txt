@@ -1,0 +1,24 @@
+StateWizard debug information.
+DLL_PROCESS_ATTACH
+OnConnection: bFirstTime = -1
+m_bNeverInstalled = 0
+AddCommandBarButton
+AddCommandBarButton Result = 1
+AddCommandBarButton
+AddCommandBarButton Result = 1
+AddCommandBarButton
+AddCommandBarButton Result = 1
+AddCommandBarButton
+AddCommandBarButton Result = 1
+AddCommandBarButton
+AddCommandBarButton Result = 1
+AddCommandBarButton
+AddCommandBarButton Result = 1
+AddCommandBarButton
+AddCommandBarButton Result = 1
+AddCommandBarButton
+AddCommandBarButton Result = 1
+AddCommandBarButton
+AddCommandBarButton Result = 1
+DestroyTotal Allocated Memory Size:0 bytes
+DLL_PROCESS_DETACH

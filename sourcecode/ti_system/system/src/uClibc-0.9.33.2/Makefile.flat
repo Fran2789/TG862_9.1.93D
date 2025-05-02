@@ -1,0 +1,78 @@
+################################################################################
+#
+# Copyright(c) 2008 Texas Instruments, Inc. All rights reserved.
+#
+# This program is free software; you can redistribute it and/or modify 
+# it under the terms of the GNU Lesser General Public License as
+# published by the Free Software Foundation version 2.1 of the License.
+#
+# This program is distributed “as is” WITHOUT ANY WARRANTY of any kind,
+# whether express or implied; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+################################################################################
+
+# *************************************************************************
+# * Makefile Wrapper file for building uClibc.
+# *************************************************************************
+
+-include $(TARGET_HOME)/TI_Build.make
+-include $(TARGET_HOME)/.config
+-include ./.config
+TI_UCLIBC_CONFIG :=$(TARGET_HOME)/build/$(PRODUCT_NAME)/configs/TI_uClibc-0.9.33.config 
+
+headers : .config
+	$(MAKE) install_headers RUNTIME_PREFIX=$(TI_filesystem_path)/ DEVEL_PREFIX=$(TARGET_HOME)/ti/ KERNEL_HEADERS=$(TARGET_HOME)/ti/include/
+
+.config: $(TI_UCLIBC_CONFIG)
+ifdef CONFIG_TI_SYSTEM_UCLIBC_DEBUG
+	@sed 's/# PTHREADS_DEBUG_SUPPORT is not set/PTHREADS_DEBUG_SUPPORT=y/g' $(TI_UCLIBC_CONFIG) | sed 's/# UCLIBC_HAS_RPC is not set/UCLIBC_HAS_RPC=y\nUCLIBC_HAS_FULL_RPC=y\nUCLIBC_HAS_REENTRANT_RPC=y/g' > .oldconfig
+else
+ifdef CONFIG_TI_PORTMAP_UTIL
+	@sed 's/# UCLIBC_HAS_RPC is not set/UCLIBC_HAS_RPC=y\nUCLIBC_HAS_FULL_RPC=y\nUCLIBC_HAS_REENTRANT_RPC=y/g' $(TI_UCLIBC_CONFIG) > .oldconfig
+else
+	@install --preserve-timestamps $(TI_UCLIBC_CONFIG) .oldconfig
+endif
+endif
+	@sed -e 's,^CROSS_COMPILER_PREFIX=.*,CROSS_COMPILER_PREFIX="$(CROSS)",g' \
+		-e 's,^KERNEL_SOURCE=.*,KERNEL_SOURCE=\"$(KERNEL_DIR)\",g' \
+		-e 's,^KERNEL_HEADERS=.*,KERNEL_HEADERS=\"$(TI_include)\",g' \
+		-e 's/DOSTRIP=y/# DOSTRIP is not set/g' \
+		-e 's,^DEVEL_PREFIX=.*,DEVEL_PREFIX=\"$(TARGET_HOME)/ti/\",g' \
+		-e 's,^RUNTIME_PREFIX=.*,RUNTIME_PREFIX=\"$(TI_filesystem_path)",g' \
+		.oldconfig > .config
+	@$(MAKE) oldconfig
+
+config: .config
+# Build target test whether it was already compiled to prevent repetetive compilation
+# Build target test whether .config file was changed after compilatioin was done
+build :.compiled .config
+.compiled: .config
+	@$(MAKE) CROSS=$(CROSS) CONFIG_ARM_THUMB=$(CONFIG_ARM_THUMB) all
+	@touch .compiled
+
+#install just runtime libraries, do not install header files
+install: .compiled
+	$(MAKE) install_runtime 
+
+uninstall:
+	@$(RM) -r $(TARGET_HOME)/ti/include
+	@$(RM) -r $(TARGET_HOME)/ti/lib
+	@$(RM) -r $(TARGET_HOME)/ti/bin
+
+
+#uclibc-0.9.33 fails to remove   lex.zconf.c zconf.tab.c libm/arm
+clean: uninstall
+	@$(MAKE) clean
+	@$(RM) -f .compiled
+	@$(RM) -f .config .oldconfig  extra/config/lex.zconf.c config/zconf.tab.c
+	@$(RM) -rf libm/arm
+
+distclean: uninstall
+	@$(MAKE) distclean
+	@$(RM) -f .compiled
+	@$(RM) -f .config .oldconfig  extra/config/lex.zconf.c config/zconf.tab.c
+	@$(RM) -rf libm/arm
+
+.PHONY: all config build install uninstall clean distclean

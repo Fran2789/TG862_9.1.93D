@@ -1,0 +1,35 @@
+# Application components
+# APP_COMPONENTS := common_components docsis_lib docsis_bin cable_vfe_lib pacm_lib pacm_bin common_voice_utils masdk ncsdk cable_vfe_bin gw_lib gw_bin hunter_creek common_post M5T 
+APP_COMPONENTS := common_components arris_libs docsis_lib arris_moca docsis_bin cable_vfe_lib pacm_lib pacm_bin common_voice_utils masdk arris_pcable ncsdk cable_vfe_bin arris_docsis gw_lib gw_bin hunter_creek common_post M5T
+SPLIT_APP_COMPONENTS := docsis pacm gw cable_vfe
+
+# ARRIS variables
+#arris_docsis_params := BUILD_POST=y
+
+# Optional additional parameters
+common_components_params := BUILD_POST=n
+common_post_params := BUILD_POST=y
+
+# Exceptions to generic config target
+config_EXCEPTIONS +=
+
+# Exceptions to generic build target
+build_EXCEPTIONS +=
+
+# Exceptions to generic install target
+install_EXCEPTIONS +=
+
+# Exceptions to generic distclean target
+distclean_EXCEPTIONS +=
+
+# Exceptions to generic package target
+package_EXCEPTIONS += common_post
+
+# Exceptions to components locations (default is ti/comp_name)
+common_post_home := ti/common_components
+
+# In case there is no .config file, define a default platform required for masdk
+ifndef BOARD
+export BOARD := puma
+endif
+

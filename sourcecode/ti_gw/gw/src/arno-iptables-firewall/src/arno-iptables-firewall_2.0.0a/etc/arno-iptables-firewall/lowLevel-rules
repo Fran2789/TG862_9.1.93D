@@ -1,0 +1,17 @@
+# Put any low level (iptables) rules here down below:
+#####################################################
+# Create new Chains
+iptables -t filter -N SEC_LEVEL &> /dev/null
+iptables -t filter -N SEC_LOG &> /dev/null
+iptables -t filter -F SEC_LEVEL
+iptables -t filter -F SEC_LOG
+
+# Set sucurity level rule
+iptables -A SEC_LOG -j LOG --log-prefix "[SEC_LEVEL]"
+iptables -A SEC_LOG -j DROP
+
+iptables -A SEC_LEVEL -p udp --dport 113:113 -j SEC_LOG
+iptables -A SEC_LEVEL -m state --state ESTABLISHED,RELATED -j RETURN
+iptables -A SEC_LEVEL -j RETURN
+
+# Add new SEC_LEVEL in FORWARD

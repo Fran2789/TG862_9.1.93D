@@ -1,0 +1,277 @@
+10:43:01	
+10:43:01	Trace Test
+10:43:01	Start realtime state tracking ...
+10:43:01	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+10:43:01	Player1         Player                          Player                              0         Activated                     
+10:44:24	Player1         Player                          PowerDown                           0         Activated                     
+10:44:52	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+10:44:52	Player1         Player          PowerDown       PowerUp         1              0         I(0   ,0   )        0         Hit                           
+10:45:16	Player1         Player                          Pause           1              0         I(0   ,0   )        0         Activated                     
+10:46:35	Player1         Player          Pause                           2              0         I(0   ,0   )        0         De-activated                  
+10:46:35	
+10:46:35	Catching the current active application states ... 
+10:46:35	APPLICATION     STATE           
+10:46:35	Player1         Playing         
+10:46:35	
+10:46:35	Player1         Player          Pause           Playing         2              0         I(0   ,0   )        31        Hit                           
+10:46:36	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:46:37	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:46:38	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:46:39	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:46:40	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:46:41	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:46:42	Player1         Player          Playing                         2              0         I(0   ,0   )        0         De-activated                  
+10:46:42	Player1         Player          Playing         Pause           2              0         I(0   ,0   )        0         Hit                           
+10:46:44	Player1         Player          Pause           Pause           1              0         I(0   ,0   )        0         Not Matched                   
+10:46:50	Player1         Player          Pause           Pause           1              0         I(0   ,0   )        0         Not Matched                   
+10:46:51	Player1         Player          Pause                           2              0         I(0   ,0   )        0         De-activated                  
+10:46:51	
+10:46:51	Catching the current active application states ... 
+10:46:51	APPLICATION     STATE           
+10:46:51	Player1         Playing         
+10:46:51	
+10:46:51	Player1         Player          Pause           Playing         2              0         I(0   ,0   )        15        Hit                           
+10:46:52	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+10:46:53	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+10:46:54	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+10:46:55	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+10:46:56	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+10:46:56	Player1         Player          Playing                         2              0         I(0   ,0   )        0         De-activated                  
+10:46:56	Player1         Player          Playing         Pause           2              0         I(0   ,0   )        0         Hit                           
+10:46:58	Player1         Player          Pause           Pause           1              0         I(0   ,0   )        0         Not Matched                   
+10:48:11	
+10:48:11	Start realtime state tracking ...
+10:48:11	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+10:48:11	Player1         Player                          Player                              0         Activated                     
+10:48:13	Player1         Player                          PowerDown                           0         Activated                     
+10:48:14	Trace Test
+10:48:16	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+10:48:16	Player1         Player          PowerDown       PowerUp         1              0         I(0   ,0   )        0         Hit                           
+10:48:16	Player1         Player                          Pause           1              0         I(0   ,0   )        0         Activated                     
+10:48:58	Player1         Player          Pause                           2              0         I(0   ,0   )        0         De-activated                  
+10:48:58	
+10:48:58	Catching the current active application states ... 
+10:48:58	APPLICATION     STATE           
+10:48:58	Player1         Playing         
+10:48:58	
+10:48:58	Player1         Player          Pause           Playing         2              0         I(0   ,0   )        16        Hit                           
+10:48:59	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:49:00	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:49:01	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:49:02	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:49:03	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:49:04	Player1         Player          Playing                         1              0         I(0   ,0   )        0         De-activated                  
+10:49:04	Player1         Player          Playing                         1              0         I(0   ,0   )        0         De-activated                  
+10:49:04	Player1         Player          Playing         PowerDown       1              0         I(0   ,0   )        0         Hit                           
+10:49:11	Player1         Player          PowerDown       PowerDown       2              0         I(0   ,0   )        0         Not Matched                   
+10:49:13	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+10:49:13	Player1         Player          PowerDown       PowerUp         1              0         I(0   ,0   )        0         Hit                           
+10:49:13	Player1         Player                          Pause           1              0         I(0   ,0   )        0         Activated                     
+10:49:15	Player1         Player          Pause                           2              0         I(0   ,0   )        0         De-activated                  
+10:49:15	
+10:49:15	Catching the current active application states ... 
+10:49:15	APPLICATION     STATE           
+10:49:15	Player1         Playing         
+10:49:15	
+10:49:15	Player1         Player          Pause           Playing         2              0         I(0   ,0   )        16        Hit                           
+10:49:16	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+10:54:08	
+10:54:08	Start realtime state tracking ...
+10:54:08	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+10:54:08	Player1         Player                          Player                              0         Activated                     
+10:54:08	Player1         Player                          PowerDown                           0         Activated                     
+10:54:09	Trace Test
+10:54:10	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+10:54:10	Player1         Player          PowerDown       PowerUp         1              0         I(0   ,0   )        0         Hit                           
+10:54:10	
+10:54:10	Catching the current active application states ... 
+10:54:10	APPLICATION     STATE           
+10:54:10	Player1         Playing         
+10:54:10	
+10:54:10	Player1         Player                          Playing         1              0         I(0   ,0   )        15        Activated                     
+10:54:11	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:12	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:13	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:14	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:15	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:16	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:17	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:18	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:19	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:20	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:21	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:22	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:23	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:24	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:25	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:26	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:27	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:45	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:45	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:46	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:47	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:48	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:49	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:50	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:51	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:54:52	Player1         Player          Playing         Playing         Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+10:56:22	
+10:56:23	Trace Test
+10:56:23	Start realtime state tracking ...
+10:56:23	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+10:56:23	Player1         Player                          Player                              0         Activated                     
+10:56:23	Player1         Player                          PowerDown                           0         Activated                     
+10:56:29	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+10:56:29	Player1         Player          PowerDown       PowerUp         1              0         I(0   ,0   )        0         Hit                           
+10:56:29	Player1         Player                          Pause           1              0         I(0   ,0   )        0         Activated                     
+18:18:01	
+18:18:01	Player2         Player                          Player                              0         Activated                     
+18:18:01	Start realtime state tracking ...
+18:18:01	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+18:18:01	Player1         Player                          Player                              0         Activated                     
+18:18:01	Player1         Player                          PowerDown                           0         Activated                     
+18:18:01	Player2         Player                          PowerDown                           16        Activated                     
+18:18:20	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+18:18:20	Player1         Player          PowerDown       Join1           1              0         I(0   ,0   )        0         Hit                           
+18:18:20	Player1         Player          PowerDown       Cond1           1              0         I(0   ,0   )        0         Join                          
+18:18:20	Player1         Player          Cond1           PowerUp         1              0         I(0   ,0   )        0         Cond                          
+18:18:20	
+18:18:20	Catching the current active application states ... 
+18:18:20	APPLICATION     STATE           
+18:18:20	Player1         Playing         
+18:18:20	
+18:18:20	SingleState1    SingleState                     SingleState                         0         Activated                     
+18:18:20	Player1         Player                          Playing         1              0         I(0   ,0   )        16        Activated                     
+18:18:21	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:18:22	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:18:23	Player1         Player          Playing         Playing         StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:18:23	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:18:24	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:18:25	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:27	
+18:23:27	Start realtime state tracking ...
+18:23:27	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+18:23:27	Player1         Player                          Player                              0         Activated                     
+18:23:27	Player1         Player                          PowerDown                           0         Activated                     
+18:23:27	Player2         Player                          Player                              0         Activated                     
+18:23:27	Player2         Player                          PowerDown                           0         Activated                     
+18:23:36	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+18:23:36	Player1         Player          PowerDown       Join1           1              0         I(0   ,0   )        0         Hit                           
+18:23:36	Player1         Player          PowerDown       Cond1           1              0         I(0   ,0   )        0         Join                          
+18:23:36	Player1         Player          Cond1           PowerUp         1              0         I(0   ,0   )        0         Cond                          
+18:23:36	
+18:23:36	Catching the current active application states ... 
+18:23:36	APPLICATION     STATE           
+18:23:36	Player1         Playing         
+18:23:36	
+18:23:36	SingleState1    SingleState                     SingleState                         0         Activated                     
+18:23:36	Player1         Player                          Playing         1              0         I(0   ,0   )        0         Activated                     
+18:23:37	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:38	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:39	Player1         Player          Playing         Playing         StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:23:39	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:40	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:41	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:42	Player1         Player          Playing         Playing         StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:23:42	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:43	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:44	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:23:45	Player1         Player          Playing         Playing         StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:23:45	Player1         Player          Playing                         StateTimer     2         I(2   ,9000)        0         De-activated                  
+18:23:45	SingleState1    SingleState     SingleState                                         0         De-activated                  
+18:23:45	Player1         Player          Playing         Pause           StateTimer     2         I(2   ,9000)        0         Hit                           
+18:23:48	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:23:51	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:23:54	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:23:57	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:00	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:03	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:06	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:09	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:12	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:15	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:18	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:21	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:24:24	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+18:25:28	
+18:25:28	Start realtime state tracking ...
+18:25:28	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+18:25:28	Player2         Player                          Player                              0         Activated                     
+18:25:28	Player1         Player                          Player                              0         Activated                     
+18:25:28	Player2         Player                          PowerDown                           0         Activated                     
+18:25:28	Player1         Player                          PowerDown                           0         Activated                     
+18:25:31	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+18:25:31	Player1         Player          PowerDown       Join1           1              0         I(0   ,0   )        0         Hit                           
+18:25:31	Player1         Player          PowerDown       Cond1           1              0         I(0   ,0   )        0         Join                          
+18:25:31	Player1         Player          Cond1           PowerUp         1              0         I(0   ,0   )        0         Cond                          
+18:25:31	
+18:25:31	Catching the current active application states ... 
+18:25:31	APPLICATION     STATE           
+18:25:31	Player1         Playing         
+18:25:31	
+18:25:31	SingleState1    SingleState                     SingleState                         0         Activated                     
+18:25:31	Player1         Player                          Playing         1              0         I(0   ,0   )        15        Activated                     
+18:25:32	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+18:27:47	
+18:27:47	Start realtime state tracking ...
+18:27:47	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+18:27:47	Player1         Player                          Player                              0         Activated                     
+18:27:48	Player2         Player                          Player                              0         Activated                     
+18:27:48	Player2         Player                          PowerDown                           0         Activated                     
+18:27:48	Player1         Player                          PowerDown                           47        Activated                     
+20:43:25	
+20:43:25	Start realtime state tracking ...
+20:43:25	Player2         Player                          Player                              0         Activated                     
+20:43:25	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+20:43:34	Player2         Player                          PowerDown                           0         Activated                     
+20:43:34	Player1         Player                          Player                              0         Activated                     
+20:43:34	Player1         Player                          PowerDown                           0         Activated                     
+20:45:37	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+20:45:37	Player1         Player          PowerDown       Join1           1              0         I(0   ,0   )        0         Hit                           
+20:45:37	Player1         Player          PowerDown       Cond1           1              0         I(0   ,0   )        0         Join                          
+20:45:37	Player1         Player          Cond1           PowerUp         1              0         I(0   ,0   )        0         Cond                          
+20:45:37	
+20:45:37	Catching the current active application states ... 
+20:45:37	APPLICATION     STATE           
+20:45:37	Player1         Playing         
+20:45:37	
+20:45:37	SingleState1    SingleState                     SingleState                         0         Activated                     
+20:45:37	Player1         Player                          Playing         1              0         I(0   ,0   )        16        Activated                     
+20:45:38	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:45:39	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:45:40	SingleState1    SingleState     SingleState     SingleState     2              0         I(0   ,0   )        0         Not Matched                   
+20:45:40	Player1         Player          Playing                         2              0         I(0   ,0   )        0         De-activated                  
+20:45:40	SingleState1    SingleState     SingleState                                         0         De-activated                  
+20:45:40	Player1         Player          Playing         Pause           2              0         I(0   ,0   )        0         Hit                           
+20:45:40	Player1         Player          Pause           Pause           StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+20:45:41	Player1         Player          Pause                           1              0         I(0   ,0   )        0         De-activated                  
+20:45:41	Player1         Player          Pause                           1              0         I(0   ,0   )        0         De-activated                  
+20:45:41	Player1         Player          Pause           PowerDown       1              0         I(0   ,0   )        0         Hit                           
+20:47:04	
+20:47:04	Start realtime state tracking ...
+20:47:04	APPLICATION     ROOT            SRC STATE       DEST STATE      EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+20:47:04	Player1         Player                          Player                              0         Activated                     
+20:47:04	Player1         Player                          PowerDown                           0         Activated                     
+20:47:04	Player2         Player                          Player                              0         Activated                     
+20:47:04	Player2         Player                          PowerDown                           0         Activated                     
+20:47:28	Player1         Player          PowerDown                       1              0         I(0   ,0   )        0         De-activated                  
+20:47:28	Player1         Player          PowerDown       Join1           1              0         I(0   ,0   )        0         Hit                           
+20:47:28	Player1         Player          PowerDown       Cond1           1              0         I(0   ,0   )        0         Join                          
+20:47:28	Player1         Player          Cond1           PowerUp         1              0         I(0   ,0   )        16        Cond                          
+20:47:28	
+20:47:28	Catching the current active application states ... 
+20:47:28	APPLICATION     STATE           
+20:47:28	Player1         Playing         
+20:47:28	
+20:47:28	SingleState1    SingleState                     SingleState                         0         Activated                     
+20:47:28	Player1         Player                          Playing         1              0         I(0   ,0   )        15        Activated                     
+20:47:29	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:47:30	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:47:31	Player1         Player          Playing         Playing         StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+20:47:31	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:47:32	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:47:33	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:47:34	Player1         Player          Playing         Playing         StateTimer     1         I(1   ,3000)        0         Internal Tran                 
+20:47:34	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:47:35	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+20:47:36	Player1         Player          Playing         Playing         Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          

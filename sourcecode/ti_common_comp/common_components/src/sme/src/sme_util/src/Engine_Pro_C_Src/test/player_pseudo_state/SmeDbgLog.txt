@@ -1,0 +1,55 @@
+22:33:36	
+22:33:37	Trace Test
+22:33:37	Start realtime state tracking ...
+22:33:37	APPLICATION     ROOT            SRC STATE       DEST STATE      DEPTH EVENT     SEQ NUM   EVENT DATA          TIME(ms)  REASON                        
+22:33:37	Player1         Player                          Player          1                         0         Activated                     
+22:33:37	Player1         Player                          Join1           1                         0         Activated                     
+22:33:37	Player1         Player                          Cond1           1                         0         Join                          
+22:33:37	Player1         Player                          PowerUp         2                         0         Cond                          
+22:33:37	
+22:33:37	Catching the current active application states ... 
+22:33:37	APPLICATION     STATE           
+22:33:37	Player1         Playing         
+22:33:37	
+22:33:37	SingleState1    SingleState                     SingleState     1                         0         Activated                     
+22:33:37	Player1         Player                          Playing         3                         16        Activated                     
+22:33:38	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:39	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:40	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:41	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:42	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:43	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:44	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:45	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:46	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:47	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:48	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:49	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:50	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:51	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:52	Player1         Player          Playing         Playing         3     Timeout        2         I(2   ,1000)        0         Guard Returned FALSE          
+22:33:53	SingleState1    SingleState     SingleState     SingleState     1     1              0         I(0   ,0   )        0         Not Matched                   
+22:33:53	Player1         Player          Playing                         3     1              0         I(0   ,0   )        0         De-activated                  
+22:33:53	SingleState1    SingleState     SingleState                     0                         0         De-activated                  
+22:33:53	Player1         Player          Playing                         2     1              0         I(0   ,0   )        0         De-activated                  
+22:33:53	Player1         Player          Playing         PowerDown       2     1              0         I(0   ,0   )        0         Hit                           
+22:34:33	Player1         Player          PowerDown       PowerDown       2     2              0         I(0   ,0   )        0         Not Matched                   
+22:34:34	Player1         Player          PowerDown                       2     1              0         I(0   ,0   )        0         De-activated                  
+22:34:34	Player1         Player          PowerDown       Join1           1     1              0         I(0   ,0   )        0         Hit                           
+22:34:34	Player1         Player          PowerDown       Cond1           1     1              0         I(0   ,0   )        0         Join                          
+22:34:34	Player1         Player          Cond1           PowerUp         2     1              0         I(0   ,0   )        0         Cond                          
+22:34:34	
+22:34:34	Catching the current active application states ... 
+22:34:34	APPLICATION     STATE           
+22:34:34	Player1         Playing         
+22:34:34	
+22:34:34	SingleState1    SingleState                     SingleState     1                         0         Activated                     
+22:34:34	Player1         Player                          Playing         3     1              0         I(0   ,0   )        16        Activated                     
+22:34:35	Player1         Player          Playing         Playing         3     Timeout        4         I(4   ,1000)        0         Guard Returned FALSE          
+22:34:36	SingleState1    SingleState     SingleState     SingleState     1     2              0         I(0   ,0   )        0         Not Matched                   
+22:34:36	Player1         Player          Playing                         3     2              0         I(0   ,0   )        0         De-activated                  
+22:34:36	SingleState1    SingleState     SingleState                     0                         0         De-activated                  
+22:34:36	Player1         Player          Playing         Pause           3     2              0         I(0   ,0   )        0         Hit                           
+22:36:01	Player1         Player          Pause                           3     1              0         I(0   ,0   )        0         De-activated                  
+22:36:01	Player1         Player          Pause                           2     1              0         I(0   ,0   )        0         De-activated                  
+22:36:01	Player1         Player          Pause           PowerDown       2     1              0         I(0   ,0   )        0         Hit                           

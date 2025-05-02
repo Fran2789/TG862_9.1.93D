@@ -1,0 +1,29 @@
+config VENDOR_NAME
+    string "Vendor name"
+    default "Texas Instruments CBC Ltd."
+	help
+                Enter the Vendor name, which will be used in the product
+
+config VENDOR_ID
+    hex "Vendor ID"
+    default 0x0050F1
+	help
+                Enter the Vendor OUI (3 Bytes only), which will be used in the product
+
+config VENDOR_INFO
+    string "Vendor information"
+    default "PacketCable 1.5 EMTA"
+	help
+                Enter the Vendor information string, which will be used in the product
+
+config VENDOR_MODEL
+    string "Vendor model"
+    default ""
+	help
+                Enter the Vendor model string, which will be used in the product
+
+config VENDOR_STRING
+    string "Vendor string"
+    default ""
+	help
+                Enter a general purpose Vendor string

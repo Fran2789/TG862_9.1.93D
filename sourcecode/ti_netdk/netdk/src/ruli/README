@@ -1,0 +1,171 @@
+#
+# $Id: README,v 1.19 2005/12/07 10:57:51 evertonm Exp $
+#
+VERSION
+    0.36
+
+LICENSE
+
+	RULI is free software; you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as
+	published by the Free Software Foundation; either version 2,
+	or (at your option) any later version.
+
+	RULI is distributed in the hope that it will be useful, but
+	WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public
+	License along with RULI; see the file COPYING.  If not, write
+	to the Free Software Foundation, Inc., 59 Temple Place - Suite
+	330, Boston, MA 02111-1307, USA.
+
+
+LINKING RULI AGAINST SOFTWARE DISTRIBUTED UNDER PHP LICENSE
+
+	Additional to those permissions granted by the GNU Public
+	License, permission is given to distribute copies of this work
+	linked to software licenced under the terms of the PHP
+	licence, Version 3.0
+
+
+INTRODUCTION
+
+	RULI stands for Resolver User Layer Interface. It's a library
+	built on top of an asynchronous DNS stub resolver. RULI
+	provides an easy-to-use interface for querying DNS SRV
+	resource records. The goal is to promote the wide deployment
+	of SRV-cognizant client programs. RULI aims to fully support
+	SRV-related standards.
+
+HOMEPAGE
+
+	http://www.nongnu.org/ruli/
+
+SUPPORT SITE
+
+	http://savannah.nongnu.org/projects/ruli/
+
+PLATFORMS
+
+        RULI main development is performed under Debian GNU/Linux.
+        Efforts are made to keep the library portable to
+        major POSIX systems, such as Solaris and FreeBSD.
+
+        If you need assistance to port RULI to your system,
+        please feel free to contact me.
+
+REQUIREMENTS
+
+	RULI depends on Liboop (0.9 or higher), available at:
+
+	http://download.ofb.net/liboop/
+
+	http://directory.fsf.org/libs/c/liboop.html
+
+	http://ftp.debian.org/debian/pool/main/libo/liboop/liboop_1.0.orig.tar.gz
+
+	http://liboop.org/
+
+BUILD AND INSTALL
+
+	1. Install Liboop on your system
+
+	2. Compile and install RULI library
+
+		cd ruli/src
+
+		# Point OOP_BASE_DIR to the location of
+		# Liboop on your system, then run 'make build'
+
+		make OOP_BASE_DIR=/usr/local/oop build
+
+		# Optionally, strip the objects
+
+		make strip
+
+	    	# Point INSTALL_BASE_DIR to location where you want
+		# to install RULI library, then run 'make install'
+
+		make INSTALL_BASE_DIR=/usr/local/ruli install
+
+	3. Tell the dynamic loader about RULI
+
+		# Add INSTALL_BASE_DIR/lib path to
+		# /etc/ld.so.conf
+
+		ldconfig
+
+	4. Compile and install RULI sample programs (optional)
+
+		cd ruli/sample
+
+		# Point OOP_BASE_DIR to the location of
+		# Liboop on your system, then run 'make build'
+
+		make OOP_BASE_DIR=/usr/local/oop build
+
+		# Optionally, strip the objects
+
+		make strip
+
+	    	# Point INSTALL_BASE_DIR to location where you want
+		# to install RULI sample programs, then run 'make install'
+
+		make INSTALL_BASE_DIR=/usr/local/ruli install
+
+	5. Compile and install RULI testing tools (optional)
+
+		cd ruli/tools
+
+		# Point OOP_BASE_DIR to the location of
+		# Liboop on your system, then run 'make build'
+
+		make OOP_BASE_DIR=/usr/local/oop build
+
+		# Optionally, strip the objects
+
+		make strip
+
+	    	# Point INSTALL_BASE_DIR to location where you want
+		# to install RULI testing tools, then run 'make install'
+
+		make INSTALL_BASE_DIR=/usr/local/ruli install
+
+SAMPLE PROGRAMS
+
+	Use the programs in 'sample' directory to test RULI. They are
+	also good introductory examples of how to use RULI APIs.
+
+	The sync_srvsearch program uses the synchronous API. This is an
+	example session:
+
+	$ echo _smtp._tcp.domain.tld | ./sync_srvsearch
+	_smtp._tcp.domain.tld target=phantom.domain.tld. priority=5 weight=0 port=25 addresses=IPv4/1.2.3.4
+	_smtp._tcp.domain.tld target=sitemail.host.tld. priority=10 weight=0 port=25 addresses=IPv4/4.3.2.1
+
+	The srvsearch program uses the asynchronous API. This is
+	an example session:
+
+	$ echo _smtp._tcp.domain.tld | ./srvsearch
+	_smtp._tcp.domain.tld target=phantom.domain.tld. priority=5 weight=0 port=25 addresses=IPv4/1.2.3.4
+	_smtp._tcp.domain.tld target=sitemail.host.tld. priority=10 weight=0 port=25 addresses=IPv4/4.3.2.1
+
+	The ruli-getaddrinfo uses the the getaddrinfo() interface
+        to lookup SRV records, based on ruliwrap from
+        http://weinholt.se/hacks/. This is an usage example:
+
+	$ echo _telnet._tcp.bogus.tld | ./ruli-getaddrinfo
+	_telnet._tcp.bogus.tld canon=mud.bogus.tld. port=6789 IPv4/5.6.7.8
+
+FREE SOFTWARE
+
+	RULI is Free Software (TM).
+
+	For more nice Free Software, visit:
+
+	http://nucleo.freeservers.com/ceosp/
+
+-x-
+
